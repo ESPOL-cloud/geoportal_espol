@@ -137,7 +137,7 @@ const poligonosStyle2 = new ol.style.Style({
 
 const poligonosStyle3 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(79, 175, 92, 1)'    
+    color: 'rgb(87, 226, 106)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -177,7 +177,7 @@ const poligonosStyle6 = new ol.style.Style({
 
 const poligonosStyle7 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(196, 95, 28, 1)'  
+    color: 'rgb(236, 110, 26)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -187,7 +187,7 @@ const poligonosStyle7 = new ol.style.Style({
 
 const poligonosStyle8 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(240, 228, 57, 1)'   
+    color: 'rgb(250, 235, 29)'   
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -197,7 +197,7 @@ const poligonosStyle8 = new ol.style.Style({
 
 const poligonosStyle9 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(103, 75, 139, 1)'  
+    color: 'rgb(81, 11, 173)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -207,7 +207,7 @@ const poligonosStyle9 = new ol.style.Style({
 
 const poligonosStyle10 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(214, 24, 10, 1)'    
+    color: 'rgb(255, 38, 23)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -227,7 +227,7 @@ const poligonosStyle11 = new ol.style.Style({
 
 const poligonosStyle12 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(41, 79, 138, 1)'    
+    color: 'rgb(20, 63, 126)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
