@@ -1213,7 +1213,7 @@ map.on('singleclick', function (evt) {
 
 // CODIGO A UTILIZAR PARA LAS TABLAS
 // Para mostrar tabla de información al hacer click en capas
-/*
+
 map.on('singleclick', function (evt) {
   
   var clickedFeature = null;
@@ -1246,7 +1246,7 @@ map.on('singleclick', function (evt) {
   // 3. FILTRAMOS EL CONTENIDO DEPENDIENDO DE QUÉ CAPA SE HIZO CLICK
   
   // --- CASO 1: CAPA ESPOL (La que editaste) ---
-  if (clickedLayer === polig_espol) {
+  /*if (clickedLayer === polig_espol) {
     htmlContent += 
     '<tr><td><strong>Ref.</strong></td><td>'+ (props.referencia_inmueble || 'N/A') + '</td></tr>' +
     '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.área_total_construcción || 'N/A') + '</td></tr>';
@@ -1272,13 +1272,13 @@ map.on('singleclick', function (evt) {
   }
 
   // --- CASO 3: CUALQUIER OTRA CAPA (Automatizada para que nunca falle) ---
-  /*else {
+  else {
     for (var key in props) {
       if (key !== 'geometry' && key !== 'boundedBy' && props.hasOwnProperty(key)) {
         htmlContent += '<tr><td><strong>' + key + '</strong></td><td>' + (props[key] || 'N/A') + '</td></tr>';
       }
     }
-  } /* 
+  }*/
 
   htmlContent += '</table>';
 
@@ -1286,7 +1286,7 @@ map.on('singleclick', function (evt) {
   document.getElementById('popup-content').innerHTML = htmlContent;
   overlay.setPosition(evt.coordinate); // Mantiene tu posición de click original exacta
 });
-*/
+
 
 
 
