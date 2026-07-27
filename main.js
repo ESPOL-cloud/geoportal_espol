@@ -749,6 +749,10 @@ const edificaciones = new ol.layer.Group({
 });
 
 
+// ZONAS
+
+
+
 /*const viasespol = new ol.layer.Tile({
   source: new ol.source.TileWMS({
     url: source + '/geoserver/gis_espol/wms',
