@@ -187,7 +187,7 @@ const poligonosStyle7 = new ol.style.Style({
 
 const poligonosStyle8 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(240, 228, 57, 0.9)'   
+    color: 'rgba(240, 228, 57, 1)'   
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
