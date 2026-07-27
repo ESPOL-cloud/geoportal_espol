@@ -117,7 +117,7 @@ const poligonosStyle = new ol.style.Style({
 
 const poligonosStyle1 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(109, 100, 52, 0.62)'    // El 0.5 se refiere a la opacidad
+    color: 'rgba(109, 100, 52, 1)'    // El 0.5 se refiere a la opacidad
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -127,7 +127,7 @@ const poligonosStyle1 = new ol.style.Style({
 
 const poligonosStyle2 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(19, 114, 32, 0.9)'  
+    color: 'rgba(19, 114, 32, 1)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -137,7 +137,7 @@ const poligonosStyle2 = new ol.style.Style({
 
 const poligonosStyle3 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(79, 175, 92, 0.9)'    
+    color: 'rgba(79, 175, 92, 1)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -147,7 +147,7 @@ const poligonosStyle3 = new ol.style.Style({
 
 const poligonosStyle4 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(26, 67, 128, 0.9)'   
+    color: 'rgba(26, 67, 128, 1)'   
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -157,7 +157,7 @@ const poligonosStyle4 = new ol.style.Style({
 
 const poligonosStyle5 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(103, 196, 196, 0.9)'    
+    color: 'rgba(103, 196, 196, 1)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -167,7 +167,7 @@ const poligonosStyle5 = new ol.style.Style({
 
 const poligonosStyle6 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(15, 15, 15, 0.9)'    
+    color: 'rgba(15, 15, 15, 1)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -177,7 +177,7 @@ const poligonosStyle6 = new ol.style.Style({
 
 const poligonosStyle7 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(196, 95, 28, 0.9)'  
+    color: 'rgba(196, 95, 28, 1)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -197,7 +197,7 @@ const poligonosStyle8 = new ol.style.Style({
 
 const poligonosStyle9 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(103, 75, 139, 0.9)'  
+    color: 'rgba(103, 75, 139, 1)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -207,7 +207,7 @@ const poligonosStyle9 = new ol.style.Style({
 
 const poligonosStyle10 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(214, 24, 10, 0.9)'    
+    color: 'rgba(214, 24, 10, 1)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -217,7 +217,7 @@ const poligonosStyle10 = new ol.style.Style({
 
 const poligonosStyle11 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(120, 127, 128, 0.9)'    
+    color: 'rgba(120, 127, 128, 1)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -227,7 +227,7 @@ const poligonosStyle11 = new ol.style.Style({
 
 const poligonosStyle12 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(41, 79, 138, 0.9)'    
+    color: 'rgba(41, 79, 138, 1)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -237,7 +237,7 @@ const poligonosStyle12 = new ol.style.Style({
 
 const poligonosStyle13 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(126, 185, 111, 0.9)'    
+    color: 'rgba(126, 185, 111, 1)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -247,7 +247,7 @@ const poligonosStyle13 = new ol.style.Style({
 
 const poligonosStyle14 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(196, 64, 178, 0.9)'    
+    color: 'rgba(196, 64, 178, 1)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -401,8 +401,54 @@ const polig_comodato = new ol.layer.Vector({
   visible: false,
   style: function(feature) {
     const attributeValue = feature.get('propietario'); 
+    const zona = feature.get('zona');
     if (attributeValue && attributeValue.toLowerCase().includes('comodato')) {  // debe estar en minúsculas
-      return polig_comodatoStyle;
+      
+      if (zona == 1) {
+        return poligonosStyle1; 
+      }
+      else if (zona == 2) {
+        return poligonosStyle2; 
+      }
+      else if (zona == 3) {
+        return poligonosStyle3; 
+      }
+      else if (zona == 4) {
+        return poligonosStyle4; 
+      }
+      else if (zona == 5) {
+        return poligonosStyle5; 
+      }
+      else if (zona == 6) {
+        return poligonosStyle6; 
+      }
+      else if (zona == 7) {
+        return poligonosStyle7; 
+      }
+      else if (zona == 8) {
+        return poligonosStyle8; 
+      }
+      else if (zona == 9) {
+        return poligonosStyle9; 
+      }
+      else if (zona == 10) {
+        return poligonosStyle10; 
+      }
+      else if (zona == 11) {
+        return poligonosStyle11; 
+      }
+      else if (zona == 12) {
+        return poligonosStyle12; 
+      }
+      else if (zona == 13) {
+        return poligonosStyle13; 
+      }
+      else if (zona == 14) {
+        return poligonosStyle14; 
+      }
+
+
+
     } else {
       return null; 
     }
@@ -449,8 +495,52 @@ const polig_arriendo = new ol.layer.Vector({
   visible: false,
   style: function(feature) {
     const attributeValue = feature.get('propietario'); 
+    const zona = feature.get('zona');
     if (attributeValue && attributeValue.toLowerCase().includes('arriendo')) {  // debe estar en minúsculas
-      return polig_arriendoStyle;
+      
+      if (zona == 1) {
+        return poligonosStyle1; 
+      }
+      else if (zona == 2) {
+        return poligonosStyle2; 
+      }
+      else if (zona == 3) {
+        return poligonosStyle3; 
+      }
+      else if (zona == 4) {
+        return poligonosStyle4; 
+      }
+      else if (zona == 5) {
+        return poligonosStyle5; 
+      }
+      else if (zona == 6) {
+        return poligonosStyle6; 
+      }
+      else if (zona == 7) {
+        return poligonosStyle7; 
+      }
+      else if (zona == 8) {
+        return poligonosStyle8; 
+      }
+      else if (zona == 9) {
+        return poligonosStyle9; 
+      }
+      else if (zona == 10) {
+        return poligonosStyle10; 
+      }
+      else if (zona == 11) {
+        return poligonosStyle11; 
+      }
+      else if (zona == 12) {
+        return poligonosStyle12; 
+      }
+      else if (zona == 13) {
+        return poligonosStyle13; 
+      }
+      else if (zona == 14) {
+        return poligonosStyle14; 
+      }
+
     } else {
       return null; 
     }
