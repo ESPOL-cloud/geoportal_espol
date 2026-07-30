@@ -956,7 +956,7 @@ const zonas = new ol.layer.Vector({
       // 2. Estilo del texto configurado con el campo 'zona'
       text: new ol.style.Text({
         text: labelText,
-        font: 'bold 12px sans-serif',
+        font: 'bold 50px sans-serif',
         fill: new ol.style.Fill({ color: '#000000' }), // Texto negro
         stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }), // Borde blanco para legibilidad
         overflow: true, // Muestra el texto incluso si el polígono es pequeño
