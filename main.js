@@ -945,10 +945,11 @@ const zonas = new ol.layer.Vector({
     const labelText = zonaValue !== undefined && zonaValue !== null ? String(zonaValue) : ''; 
 
     return new ol.style.Style({
+
       text: new ol.style.Text({
         // Since zonaValue is a number, we use .toString() here so OpenLayers can render it as text
         text: zonaValue !== undefined && zonaValue !== null ? zonaValue.toString() : '',
-        font: 'bold 50px sans-serif',
+        font: 'bold 24px sans-serif',
         fill: new ol.style.Fill({ color: '#000000' }), 
         stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }), 
         overflow: true, 
