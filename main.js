@@ -755,7 +755,9 @@ const edificaciones = new ol.layer.Group({
 // En Geodata Converter (mygeodata.cloud) se lo convierte a geojson (el sistema de coordenadas a colocar es 32717, no 4326). Colocar los formatos shp, shx y dbf, no solo el archivo shapefile.
 // Con el archivo geojson en geojson.io importar el archivo, y copiar las coordenadas en el geojson general de trabajo.
 // OPCION 2
-// Mediante QGIA convertir el shapefile a geojson
+// Mediante QGIS convertir el shapefile a geojson 
+// Cambiar CRS de capa a 32717. Luego reproyectar la capa en Vector - Data Management - Reproyectar capa a 4326. 
+// Guardar la capa reproyectada como shapefile
 
 
 
