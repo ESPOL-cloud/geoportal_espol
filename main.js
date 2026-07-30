@@ -945,16 +945,6 @@ const zonas = new ol.layer.Vector({
     const labelText = zonaValue !== undefined && zonaValue !== null ? String(zonaValue) : ''; 
 
     return new ol.style.Style({
-      // 1. Estilo del polígono (Relleno y Borde)
-      fill: new ol.style.Fill({
-        color: 'rgba(13, 13, 14, 0.2)' 
-      }),
-      stroke: new ol.style.Stroke({
-        color: '#0064c8', 
-        width: 2
-      }),
-
-      // 2. Estilo del texto configurado con el campo 'zona'
       text: new ol.style.Text({
         text: labelText,
         font: 'bold 50px sans-serif',
