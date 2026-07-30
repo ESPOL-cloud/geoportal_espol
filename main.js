@@ -912,9 +912,9 @@ const zonas = new ol.layer.Vector({
     else if (zona == 7) {
       return poligonosStyle7; 
     }
-    else if (zona == 8) {
-      return poligonosStyle8; 
-    }
+    //else if (zona == 8) {
+     // return poligonosStyle8; 
+    //}
     else if (zona == 9) {
       return poligonosStyle9; 
     }
