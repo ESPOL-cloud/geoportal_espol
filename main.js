@@ -877,7 +877,7 @@ edificaciones.on('change:visible', function() {
 
 
 
-
+/*
 // ZONAS DE ESPOL
 const zonas = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/zonas_espol.geojson', format: new ol.format.GeoJSON() }),
@@ -991,7 +991,7 @@ zonas.on('change:visible', () => {
   zonas_puntos.setVisible(isVisible);
 });
 
-
+*/
 
 
 
@@ -1004,8 +1004,8 @@ const map = new ol.Map(
             basemap,
             vias,
             infraestructura,
-            zonas,
-            zonas_puntos
+            //zonas,
+            //zonas_puntos
         ], 
         view: new ol.View({
             center: new ol.proj.fromLonLat([-79.964506 , -2.148383]),
