@@ -879,12 +879,103 @@ edificaciones.on('change:visible', function() {
 
 
 // ZONAS DE ESPOL
+const zonas = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/zonas_espol.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Zonas'
+  visible: false,
+  style: function(feature) {
+    const attributeValue = feature.get('zona'); 
+    const zona = feature.get('zona');
+    if (attributeValue === null && attributeValue === undefined && String(attributeValue).trim() === '') {  // Quita las celdas null
+      return null; // Oculta el polígono si el campo está vacío o es nulo
+    }
+
+    if (zona == 1) {
+      return poligonosStyle1; 
+    }
+    else if (zona == 2) {
+      return poligonosStyle2; 
+    }
+    else if (zona == 3) {
+      return poligonosStyle3; 
+    }
+    else if (zona == 4) {
+      return poligonosStyle4; 
+    }
+    else if (zona == 5) {
+      return poligonosStyle5; 
+    }
+    else if (zona == 6) {
+      return poligonosStyle6; 
+    }
+    else if (zona == 7) {
+      return poligonosStyle7; 
+    }
+    else if (zona == 8) {
+      return poligonosStyle8; 
+    }
+    else if (zona == 9) {
+      return poligonosStyle9; 
+    }
+    else if (zona == 10) {
+      return poligonosStyle10; 
+    }
+    else if (zona == 11) {
+      return poligonosStyle11; 
+    }
+    else if (zona == 12) {
+      return poligonosStyle12; 
+    }
+    else if (zona == 13) {
+      return poligonosStyle13; 
+    }
+    else if (zona == 14) {
+      return poligonosStyle14; 
+    }
+  
 
 
 
 
 
+    const zonaValue = feature.get('zona');
+    
+    // Si no tiene zona, no muestra texto
+    const labelText = zonaValue !== undefined && zonaValue !== null ? String(zonaValue) : ''; 
 
+    return new ol.style.Style({
+      // 1. Estilo del polígono (Relleno y Borde)
+      fill: new ol.style.Fill({
+        color: 'rgba(13, 13, 14, 0.2)' 
+      }),
+      stroke: new ol.style.Stroke({
+        color: '#0064c8', 
+        width: 2
+      }),
+
+      // 2. Estilo del texto configurado con el campo 'zona'
+      text: new ol.style.Text({
+        text: labelText,
+        font: 'bold 12px sans-serif',
+        fill: new ol.style.Fill({ color: '#000000' }), // Texto negro
+        stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }), // Borde blanco para legibilidad
+        overflow: true, // Muestra el texto incluso si el polígono es pequeño
+        placement: 'point'
+      }),
+
+      // 3. Ubica el texto exactamente en el centroide interior del polígono
+      geometry: function(feature) {
+        const geom = feature.getGeometry();
+        if (geom.getType() === 'Polygon') {
+          return geom.getInteriorPoint();
+        } else if (geom.getType() === 'MultiPolygon') {
+          return geom.getInteriorPoints();
+        }
+        return geom;
+      }
+    })
+  }
+});
 
 
 
@@ -898,6 +989,7 @@ const map = new ol.Map(
             basemap,
             vias,
             infraestructura,
+            zonas
         ], 
         view: new ol.View({
             center: new ol.proj.fromLonLat([-79.964506 , -2.148383]),
