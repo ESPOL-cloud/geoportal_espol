@@ -891,52 +891,6 @@ const zonas = new ol.layer.Vector({
       return null; // Oculta el polígono si el campo está vacío o es nulo
     }
 
-    if (zona == 1) {
-      return poligonosStyle1; 
-    }
-    else if (zona == 2) {
-      return poligonosStyle2; 
-    }
-    else if (zona == 3) {
-      return poligonosStyle3; 
-    }
-    else if (zona == 4) {
-      return poligonosStyle4; 
-    }
-    else if (zona == 5) {
-      return poligonosStyle5; 
-    }
-    else if (zona == 6) {
-      return poligonosStyle6; 
-    }
-    else if (zona == 7) {
-      return poligonosStyle7; 
-    }
-    //else if (zona == 8) {
-     // return poligonosStyle8; 
-    //}
-    else if (zona == 9) {
-      return poligonosStyle9; 
-    }
-    else if (zona == 10) {
-      return poligonosStyle10; 
-    }
-    else if (zona == 11) {
-      return poligonosStyle11; 
-    }
-    else if (zona == 12) {
-      return poligonosStyle12; 
-    }
-    else if (zona == 13) {
-      return poligonosStyle13; 
-    }
-    else if (zona == 14) {
-      return poligonosStyle14; 
-    }
-  
-
-
-
 
 
     const zonaValue = feature.get('zona');
@@ -972,7 +926,60 @@ const zonas = new ol.layer.Vector({
         }
         return geom;
       }
-    });
+    })
+
+
+
+
+
+
+
+
+    if (zona == 1) {
+      return poligonosStyle1; 
+    }
+    else if (zona == 2) {
+      return poligonosStyle2; 
+    }
+    else if (zona == 3) {
+      return poligonosStyle3; 
+    }
+    else if (zona == 4) {
+      return poligonosStyle4; 
+    }
+    else if (zona == 5) {
+      return poligonosStyle5; 
+    }
+    else if (zona == 6) {
+      return poligonosStyle6; 
+    }
+    else if (zona == 7) {
+      return poligonosStyle7; 
+    }
+    else if (zona == 8) {
+     return poligonosStyle8; 
+    }
+    else if (zona == 9) {
+      return poligonosStyle9; 
+    }
+    else if (zona == 10) {
+      return poligonosStyle10; 
+    }
+    else if (zona == 11) {
+      return poligonosStyle11; 
+    }
+    else if (zona == 12) {
+      return poligonosStyle12; 
+    }
+    else if (zona == 13) {
+      return poligonosStyle13; 
+    }
+    else if (zona == 14) {
+      return poligonosStyle14; 
+    }
+  
+
+    ;
   }
 });
 
