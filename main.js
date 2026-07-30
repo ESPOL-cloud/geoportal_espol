@@ -948,21 +948,21 @@ const zonas = new ol.layer.Vector({
       text: new ol.style.Text({
         text: labelText,
         font: 'bold 50px sans-serif',
-        fill: new ol.style.Fill({ color: '#000000' }), // Texto negro
-        stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }), // Borde blanco para legibilidad
-        overflow: true, // Muestra el texto incluso si el polígono es pequeño
+        fill: new ol.style.Fill({ color: '#000000' }), 
+        stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }), 
+        overflow: true, 
         placement: 'point'
       }),
 
-      // 3. Ubica el texto exactamente en el centroide interior del polígono
-      geometry: function(feature) {
-        const geom = feature.getGeometry();
+      // FIX: Removed 'feature' from the function argument. 
+      // Inside an OpenLayers style geometry function, you use 'this.getGeometry()'
+      geometry: function() {
+        const geom = this.getGeometry();
         const type = geom.getType();
         
         if (type === 'Polygon') {
           return geom.getInteriorPoint();
         } else if (type === 'MultiPolygon') {
-          // Extracts a single point geometry from the multipolygon array
           return geom.getInteriorPoints().getPoint(0); 
         }
         return geom;
