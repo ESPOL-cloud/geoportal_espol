@@ -891,50 +891,6 @@ const zonas = new ol.layer.Vector({
       return null; // Oculta el polígono si el campo está vacío o es nulo
     }
 
-
-
-    const zonaValue = feature.get('zona');
-    
-    // Si no tiene zona, no muestra texto
-    const labelText = zonaValue !== undefined && zonaValue !== null ? String(zonaValue) : ''; 
-
-    return new ol.style.Style({
-
-      text: new ol.style.Text({
-        // Since zonaValue is a number, we use .toString() here so OpenLayers can render it as text
-        text: zonaValue !== undefined && zonaValue !== null ? zonaValue.toString() : '',
-        font: 'bold 24px sans-serif',
-        fill: new ol.style.Fill({ color: '#000000' }), 
-        stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }), 
-        overflow: true, 
-        placement: 'point'
-      }),
-
-      // CORRECT OPENLAYERS SYNTAX: The function receives the 'feature' argument natively.
-      // We use feature.getGeometry() directly.
-      geometry: function(feature) {
-        const geom = feature.getGeometry();
-        if (!geom) return null;
-        
-        const type = geom.getType();
-        if (type === 'Polygon') {
-          return geom.getInteriorPoint();
-        } else if (type === 'MultiPolygon') {
-          // Correct way to extract the first point geometry from a MultiPolygon text anchor
-          const interiorPoints = geom.getInteriorPoints();
-          return new ol.geom.Point(interiorPoints.getCoordinates()[0]);
-        }
-        return geom;
-      }
-    })
-
-
-
-
-
-
-
-
     if (zona == 1) {
       return poligonosStyle1; 
     }
@@ -983,6 +939,59 @@ const zonas = new ol.layer.Vector({
   }
 });
 
+const zonas_puntos = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/zonas_espol.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Zonas</b>',
+  visible: false,
+  style: function(feature) {
+    const attributeValue = feature.get('zona'); 
+    const zonaValue = feature.get('zona');
+    if (attributeValue === null && attributeValue === undefined && String(attributeValue).trim() === '') {  // Quita las celdas null
+      return null; // Oculta el polígono si el campo está vacío o es nulo
+    }
+
+    // Si no tiene zona, no muestra texto
+    const labelText = zonaValue !== undefined && zonaValue !== null ? String(zonaValue) : ''; 
+
+    return new ol.style.Style({
+
+      text: new ol.style.Text({
+        // Since zonaValue is a number, we use .toString() here so OpenLayers can render it as text
+        text: zonaValue !== undefined && zonaValue !== null ? zonaValue.toString() : '',
+        font: 'bold 24px sans-serif',
+        fill: new ol.style.Fill({ color: '#000000' }), 
+        stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }), 
+        overflow: true, 
+        placement: 'point'
+      }),
+
+      // CORRECT OPENLAYERS SYNTAX: The function receives the 'feature' argument natively.
+      // We use feature.getGeometry() directly.
+      geometry: function(feature) {
+        const geom = feature.getGeometry();
+        if (!geom) return null;
+        
+        const type = geom.getType();
+        if (type === 'Polygon') {
+          return geom.getInteriorPoint();
+        } else if (type === 'MultiPolygon') {
+          // Correct way to extract the first point geometry from a MultiPolygon text anchor
+          const interiorPoints = geom.getInteriorPoints();
+          return new ol.geom.Point(interiorPoints.getCoordinates()[0]);
+        }
+        return geom;
+      }
+    })
+
+
+  }
+});
+
+
+zonas.on('change:visible', () => {
+  const isVisible = zonas.getVisible();
+  zonas_puntos.setVisible(isVisible);
+});
 
 
 
