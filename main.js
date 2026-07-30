@@ -966,10 +966,13 @@ const zonas = new ol.layer.Vector({
       // 3. Ubica el texto exactamente en el centroide interior del polígono
       geometry: function(feature) {
         const geom = feature.getGeometry();
-        if (geom.getType() === 'Polygon') {
+        const type = geom.getType();
+        
+        if (type === 'Polygon') {
           return geom.getInteriorPoint();
-        } else if (geom.getType() === 'MultiPolygon') {
-          return geom.getInteriorPoints();
+        } else if (type === 'MultiPolygon') {
+          // Extracts a single point geometry from the multipolygon array
+          return geom.getInteriorPoints().getPoint(0); 
         }
         return geom;
       }
