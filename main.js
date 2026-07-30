@@ -946,7 +946,8 @@ const zonas = new ol.layer.Vector({
 
     return new ol.style.Style({
       text: new ol.style.Text({
-        text: labelText,
+        // Since zonaValue is a number, we use .toString() here so OpenLayers can render it as text
+        text: zonaValue !== undefined && zonaValue !== null ? zonaValue.toString() : '',
         font: 'bold 50px sans-serif',
         fill: new ol.style.Fill({ color: '#000000' }), 
         stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }), 
@@ -954,20 +955,23 @@ const zonas = new ol.layer.Vector({
         placement: 'point'
       }),
 
-      // FIX: Removed 'feature' from the function argument. 
-      // Inside an OpenLayers style geometry function, you use 'this.getGeometry()'
-      geometry: function() {
-        const geom = this.getGeometry();
-        const type = geom.getType();
+      // CORRECT OPENLAYERS SYNTAX: The function receives the 'feature' argument natively.
+      // We use feature.getGeometry() directly.
+      geometry: function(feature) {
+        const geom = feature.getGeometry();
+        if (!geom) return null;
         
+        const type = geom.getType();
         if (type === 'Polygon') {
           return geom.getInteriorPoint();
         } else if (type === 'MultiPolygon') {
-          return geom.getInteriorPoints().getPoint(0); 
+          // Correct way to extract the first point geometry from a MultiPolygon text anchor
+          const interiorPoints = geom.getInteriorPoints();
+          return new ol.geom.Point(interiorPoints.getCoordinates()[0]);
         }
         return geom;
       }
-    })
+    });
   }
 });
 
