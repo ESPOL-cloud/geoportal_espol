@@ -870,7 +870,7 @@ edificaciones.on('change:visible', function() {
 /*
 // ZONAS
 // OPCION 1
-// De Civil 3D se obtienen las zonas mediante MAPEXPORT (se exportan como líneas) como shapefil shp. 
+// De Civil 3D se obtienen las zonas mediante MAPEXPORT (se exportan como líneas) como shapefile shp. 
 // En Geodata Converter (mygeodata.cloud) se lo convierte a geojson (el sistema de coordenadas a colocar es 32717, no 4326). Colocar los formatos shp, shx y dbf, no solo el archivo shapefile.
 // Con el archivo geojson en geojson.io importar el archivo, y copiar las coordenadas en el geojson general de trabajo.
 // OPCION 2
