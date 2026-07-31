@@ -749,16 +749,6 @@ const edificaciones = new ol.layer.Group({
 });
 
 
-// ZONAS
-// OPCION 1
-// De Civil 3D se obtienen las zonas mediante MAPEXPORT (se exportan como líneas) como shapefil shp. 
-// En Geodata Converter (mygeodata.cloud) se lo convierte a geojson (el sistema de coordenadas a colocar es 32717, no 4326). Colocar los formatos shp, shx y dbf, no solo el archivo shapefile.
-// Con el archivo geojson en geojson.io importar el archivo, y copiar las coordenadas en el geojson general de trabajo.
-// OPCION 2
-// Mediante QGIS convertir el shapefile a geojson 
-// Cambiar CRS de capa a 32717. Luego reproyectar la capa en Vector - Data Management - Reproyectar capa a 4326. 
-// Guardar la capa reproyectada como shapefile
-
 
 
 
@@ -878,7 +868,15 @@ edificaciones.on('change:visible', function() {
 
 
 /*
-// ZONAS DE ESPOL
+// ZONAS
+// OPCION 1
+// De Civil 3D se obtienen las zonas mediante MAPEXPORT (se exportan como líneas) como shapefil shp. 
+// En Geodata Converter (mygeodata.cloud) se lo convierte a geojson (el sistema de coordenadas a colocar es 32717, no 4326). Colocar los formatos shp, shx y dbf, no solo el archivo shapefile.
+// Con el archivo geojson en geojson.io importar el archivo, y copiar las coordenadas en el geojson general de trabajo.
+// OPCION 2
+// Mediante QGIS convertir el shapefile a geojson 
+// Cambiar CRS de capa a 32717. Luego reproyectar la capa en Vector - Data Management - Reproyectar capa a 4326. 
+// Guardar la capa reproyectada como shapefile
 const zonas = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/zonas_espol.geojson', format: new ol.format.GeoJSON() }),
   title: '<b>Zonas</b>',
