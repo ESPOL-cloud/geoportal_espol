@@ -1575,12 +1575,10 @@ map.on('singleclick', function (evt) {
 
 const popupElement = document.createElement('div');
 popupElement.id = 'comodato-map-control';
-
-// Style it to anchor safely inside the map area (e.g., bottom-left corner)
-popupElement.className = 'ol-unselectable ol-control'; // Uses native OpenLayers control classes
+popupElement.className = 'ol-unselectable ol-control'; 
 popupElement.style.position = 'absolute';
-popupElement.style.bottom = '20px';       // Positioned near the bottom edge of the map
-popupElement.style.left = '20px';         // Positioned near the left edge of the map
+popupElement.style.bottom = '20px';       
+popupElement.style.left = '20px';         
 popupElement.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
 popupElement.style.border = '1px solid #ccc';
 popupElement.style.borderRadius = '4px';
@@ -1588,64 +1586,77 @@ popupElement.style.padding = '12px';
 popupElement.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
 popupElement.style.maxWidth = '350px';
 popupElement.style.zIndex = '1000';
-popupElement.style.display = 'none';      // Hidden by default
+popupElement.style.display = 'none';      
 
-// 2. Wrap the element inside a native OpenLayers Control structure
-const comodatoTableControl = new ol.control.Control({
-  element: popupElement
-});
-
-// 3. Add the control directly to your map object instance
+const comodatoTableControl = new ol.control.Control({ element: popupElement });
 map.addControl(comodatoTableControl);
 
-// 4. Hook up your visibility event listener to toggle the inner map table
-polig_comodato.on('change:visible', () => {
-  const isVisible = polig_comodato.getVisible(); 
+// 2. SEPARATED FUNCTION: This builds and displays the table safely
+function updateComodatoTable() {
+  const source = polig_comodato.getSource();
+  const features = source.getFeatures(); 
   
-  if (isVisible) {
-    const source = polig_comodato.getSource();
-    const features = source.getFeatures(); 
-    
-    let tableRowsHTML = '';
-    
-    features.forEach((feature) => {
-      const props = feature.getProperties(); 
-      
-      const codigoActual = props.código_actual || 'N/A';
-      const codigoAnterior = props.código_anterior || 'N/A';
-      const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
-      
-      tableRowsHTML += `
-        <tr>
-          <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${codigoActual}</td>
-          <td style="padding: 6px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
-          <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
-        </tr>
-      `;
-    });
-
-    // Inject the fully built table into our native map control element
-    popupElement.innerHTML = `
-      <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
-        Comodatos Activos
-      </h4>
-      <div style="max-height: 180px; overflow-y: auto;">
-        <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 11px;">
-          <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
-            <th style="padding: 6px; border: 1px solid #ddd;">Cód. Actual</th>
-            <th style="padding: 6px; border: 1px solid #ddd;">Cód. Ant.</th>
-            <th style="padding: 6px; border: 1px solid #ddd; text-align: center;">Zona</th>
-          </tr>
-          ${tableRowsHTML}
-        </table>
-      </div>
-    `;
-    
+  // If the layer is checked but features aren't loaded into the source yet, do nothing.
+  // The 'featuresloadend' listener below will automatically catch it when they arrive.
+  if (features.length === 0) {
+    popupElement.innerHTML = `<div style="font-size:12px; color:#666; padding:10px;">Cargando datos...</div>`;
     popupElement.style.display = 'block';
+    return;
+  }
+
+  let tableRowsHTML = '';
+  
+  features.forEach((feature) => {
+    const props = feature.getProperties(); 
+    const codigoActual = props.código_actual || 'N/A';
+    const codigoAnterior = props.código_anterior || 'N/A';
+    const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
+    
+    tableRowsHTML += `
+      <tr>
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${codigoActual}</td>
+        <td style="padding: 6px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
+        <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
+      </tr>
+    `;
+  });
+
+  popupElement.innerHTML = `
+    <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
+      Comodatos Activos
+    </h4>
+    <div style="max-height: 180px; overflow-y: auto;">
+      <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 11px;">
+        <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
+          <th style="padding: 6px; border: 1px solid #ddd;">Cód. Actual</th>
+          <th style="padding: 6px; border: 1px solid #ddd;">Cód. Ant.</th>
+          <th style="padding: 6px; border: 1px solid #ddd; text-align: center;">Zona</th>
+        </tr>
+        ${tableRowsHTML}
+      </table>
+    </div>
+  `;
+  
+  popupElement.style.display = 'block';
+}
+
+// 3. LISTEN TO INITIAL VISIBILITY TOGGLE
+polig_comodato.on('change:visible', () => {
+  if (polig_comodato.getVisible()) {
+    updateComodatoTable(); // Attempts to run immediately
   } else {
-    popupElement.style.display = 'none';
+    popupElement.style.display = 'none'; // Hides instantly when unchecked
   }
 });
+
+// 4. THE CRUCIAL FIX: If data arrives AFTER the user clicks, update the table instantly
+polig_comodato.getSource().on('featuresloadend', () => {
+  // Only update the table if the user currently wants to see the layer
+  if (polig_comodato.getVisible()) {
+    updateComodatoTable();
+  }
+});
+
 
 
 
