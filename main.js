@@ -1573,26 +1573,36 @@ map.on('singleclick', function (evt) {
 
 // TABLA PARA COMODATO
 
-const popupContainer = document.createElement('div');
-popupContainer.id = 'comodato-legend-popup';
-popupContainer.style.position = 'fixed';
-popupContainer.style.top = '75%';
-popupContainer.style.left = '5%';
-popupContainer.style.backgroundColor = '#ffffff';
-popupContainer.style.border = '2px solid #0064c8';
-popupContainer.style.padding = '20px';
-popupContainer.style.boxShadow = '0px 4px 10px rgba(0,0,0,0.3)';
-popupContainer.style.zIndex = '9999';
-popupContainer.style.display = 'none'; // Hidden by default
-document.body.appendChild(popupContainer);
+const popupElement = document.createElement('div');
+popupElement.id = 'comodato-map-control';
 
-// 2. Define the specific HTML table for your COMODATOS layer
+// Style it to anchor safely inside the map area (e.g., bottom-left corner)
+popupElement.className = 'ol-unselectable ol-control'; // Uses native OpenLayers control classes
+popupElement.style.position = 'absolute';
+popupElement.style.bottom = '20px';       // Positioned near the bottom edge of the map
+popupElement.style.left = '20px';         // Positioned near the left edge of the map
+popupElement.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+popupElement.style.border = '1px solid #ccc';
+popupElement.style.borderRadius = '4px';
+popupElement.style.padding = '12px';
+popupElement.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
+popupElement.style.maxWidth = '350px';
+popupElement.style.zIndex = '1000';
+popupElement.style.display = 'none';      // Hidden by default
+
+// 2. Wrap the element inside a native OpenLayers Control structure
+const comodatoTableControl = new ol.control.Control({
+  element: popupElement
+});
+
+// 3. Add the control directly to your map object instance
+map.addControl(comodatoTableControl);
+
+// 4. Hook up your visibility event listener to toggle the inner map table
 polig_comodato.on('change:visible', () => {
-  // Check if the layer checkbox is currently active/checked
   const isVisible = polig_comodato.getVisible(); 
   
   if (isVisible) {
-    // LAYER CHECKED: Extract data and build the table dynamically
     const source = polig_comodato.getSource();
     const features = source.getFeatures(); 
     
@@ -1601,41 +1611,39 @@ polig_comodato.on('change:visible', () => {
     features.forEach((feature) => {
       const props = feature.getProperties(); 
       
-      // Extract properties matching your exact accent marks and casings
       const codigoActual = props.código_actual || 'N/A';
       const codigoAnterior = props.código_anterior || 'N/A';
       const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
       
       tableRowsHTML += `
         <tr>
-          <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: #333;">${codigoActual}</td>
-          <td style="padding: 8px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
-          <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${zona}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${codigoActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
         </tr>
       `;
     });
 
-    const fullDynamicHTML = `
-      <h3 style="margin-top:0; color:#0064c8; font-size:16px;">Inventario de Comodatos</h3>
-      <div style="max-height: 250px; overflow-y: auto;">
-        <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 13px;">
-          <tr style="background-color: #f2f2f2; border-bottom: 2px solid #333;">
-            <th style="padding: 8px; border: 1px solid #ddd;">Código Actual</th>
-            <th style="padding: 8px; border: 1px solid #ddd;">Código Anterior</th>
-            <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Zona</th>
+    // Inject the fully built table into our native map control element
+    popupElement.innerHTML = `
+      <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
+        Comodatos Activos
+      </h4>
+      <div style="max-height: 180px; overflow-y: auto;">
+        <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 11px;">
+          <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
+            <th style="padding: 6px; border: 1px solid #ddd;">Cód. Actual</th>
+            <th style="padding: 6px; border: 1px solid #ddd;">Cód. Ant.</th>
+            <th style="padding: 6px; border: 1px solid #ddd; text-align: center;">Zona</th>
           </tr>
           ${tableRowsHTML}
         </table>
       </div>
     `;
-
-    // Inject content and show popup panel container
-    popupContainer.innerHTML = fullDynamicHTML;
-    popupContainer.style.display = 'block';
-
+    
+    popupElement.style.display = 'block';
   } else {
-    // LAYER UNCHECKED: Instantly hide the popup container
-    popupContainer.style.display = 'none';
+    popupElement.style.display = 'none';
   }
 });
 
