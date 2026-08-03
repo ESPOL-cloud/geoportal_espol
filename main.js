@@ -1685,7 +1685,7 @@ popupElement_arriendo.style.maxWidth = '350px';
 popupElement_arriendo.style.zIndex = '1000';
 popupElement_arriendo.style.display = 'none';      
 
-const arriendoTableControl = new ol.control.Control({ element: popupElement });
+const arriendoTableControl = new ol.control.Control({ element: popupElement_arriendo });
 map.addControl(arriendoTableControl);
 
 // 2. SEPARATED FUNCTION: This builds and displays the table safely
