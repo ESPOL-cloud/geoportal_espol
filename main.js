@@ -1577,7 +1577,7 @@ const popupElement = document.createElement('div');
 popupElement.id = 'comodato-map-control';
 popupElement.className = 'ol-unselectable ol-control'; 
 popupElement.style.position = 'absolute';
-popupElement.style.bottom = '20px';       
+popupElement.style.bottom = '40px';       
 popupElement.style.left = '20px';         
 popupElement.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
 popupElement.style.border = '1px solid #ccc';
@@ -1634,10 +1634,10 @@ function updateComodatoTable() {
 
   popupElement.innerHTML = `
     <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
-      Comodatos Activos
+      Comodatos
     </h4>
     <div style="max-height: 180px; overflow-y: auto;">
-      <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 11px;">
+      <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 14px;">
         <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
           <th style="padding: 6px; border: 1px solid #ddd;">Cód. Actual</th>
           <th style="padding: 6px; border: 1px solid #ddd;">Cód. Ant.</th>
