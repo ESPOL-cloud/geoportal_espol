@@ -1107,6 +1107,7 @@ const map = new ol.Map(
         target: "map",
         layers: [
             basemap,
+            lindero,
             viasespol,
             polig_arriendo,
             puntos_arriendo,
@@ -1124,7 +1125,7 @@ const map = new ol.Map(
     }
 );
 
-map.addLayer(lindero);
+//map.addLayer(lindero);
 
 const layerSwitcher = new ol.control.LayerSwitcher(
 {
