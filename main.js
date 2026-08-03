@@ -882,98 +882,98 @@ edificaciones.on('change:visible', function() {
 const zonasStyle1 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(109, 100, 52, 1)', 
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle2 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(19, 114, 32, 1)', 
-    width: 2 
+    width: 6
   })
 });
 
 const zonasStyle3 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgb(87, 226, 106)', 
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle4 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(26, 67, 128, 1)',   
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle5 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(103, 196, 196, 1)', 
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle6 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(15, 15, 15, 1)', 
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle7 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgb(236, 110, 26)', 
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle8 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgb(250, 235, 29)', 
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle9 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgb(81, 11, 173)', 
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle10 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgb(255, 38, 23)', 
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle11 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(120, 127, 128, 1)', 
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle12 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgb(20, 63, 126)', 
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle13 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(126, 185, 111, 1)', 
-    width: 2 
+    width: 6 
   })
 });
 
 const zonasStyle14 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(196, 64, 178, 1)', 
-    width: 2 
+    width: 6 
   })
 });
 
@@ -1111,7 +1111,7 @@ const map = new ol.Map(
             polig_arriendo,
             polig_comodato,
             zonas,
-            zonas_puntos
+            zonas_puntos,
             poligonos
         ], 
         view: new ol.View({
