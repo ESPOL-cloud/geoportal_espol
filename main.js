@@ -1112,7 +1112,7 @@ const map = new ol.Map(
             polig_comodato,
             zonas,
             zonas_puntos,
-            poligonos,
+            poligonos, // edificaciones
         ], 
         view: new ol.View({
             center: new ol.proj.fromLonLat([-79.964506 , -2.148383]),
