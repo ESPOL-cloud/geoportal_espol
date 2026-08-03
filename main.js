@@ -1526,7 +1526,7 @@ map.on('singleclick', function (evt) {
   // 3. FILTRAMOS EL CONTENIDO DEPENDIENDO DE QUÉ CAPA SE HIZO CLICK
   
   // --- CASO 1: CAPA ESPOL (La que editaste) ---
-  /*if (clickedLayer === polig_espol) {
+  if (clickedLayer === polig_espol) {
     htmlContent += 
     '<tr><td><strong>Ref.</strong></td><td>'+ (props.referencia_inmueble || 'N/A') + '</td></tr>' +
     '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.área_total_construcción || 'N/A') + '</td></tr>';
@@ -1558,7 +1558,7 @@ map.on('singleclick', function (evt) {
         htmlContent += '<tr><td><strong>' + key + '</strong></td><td>' + (props[key] || 'N/A') + '</td></tr>';
       }
     }
-  }*/
+  }
 
   htmlContent += '</table>';
 
