@@ -1572,12 +1572,11 @@ map.on('singleclick', function (evt) {
 
 
 // TABLA PARA COMODATO
-
 const popupElement = document.createElement('div');
 popupElement.id = 'comodato-map-control';
 popupElement.className = 'ol-unselectable ol-control'; 
 popupElement.style.position = 'absolute';
-popupElement.style.bottom = '60px';       
+popupElement.style.bottom = '80px';       
 popupElement.style.left = '20px';         
 popupElement.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
 popupElement.style.border = '1px solid #ccc';
@@ -1668,6 +1667,103 @@ polig_comodato.getSource().on('featuresloadend', () => {
   }
 });
 
+
+
+// TABLA PARA ARRIENDOS
+const popupElement = document.createElement('div');
+popupElement.id = 'arriendo-map-control';
+popupElement.className = 'ol-unselectable ol-control'; 
+popupElement.style.position = 'absolute';
+popupElement.style.bottom = '80px';       
+popupElement.style.left = '20px';         
+popupElement.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+popupElement.style.border = '1px solid #ccc';
+popupElement.style.borderRadius = '4px';
+popupElement.style.padding = '12px';
+popupElement.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
+popupElement.style.maxWidth = '350px';
+popupElement.style.zIndex = '1000';
+popupElement.style.display = 'none';      
+
+const arriendoTableControl = new ol.control.Control({ element: popupElement });
+map.addControl(arriendoTableControl);
+
+// 2. SEPARATED FUNCTION: This builds and displays the table safely
+function updateComodatoTable() {
+  const source = polig_arriendo.getSource();
+  const features = source.getFeatures(); 
+  
+  if (features.length === 0) {
+    popupElement.innerHTML = `<div style="font-size:12px; color:#666; padding:10px;">Cargando datos...</div>`;
+    popupElement.style.display = 'block';
+    return;
+  }
+
+  let tableRowsHTML = '';
+  
+  features.forEach((feature) => {
+    const props = feature.getProperties(); 
+    
+    // 1. EXTRAE EL PROPIETARIO PARA VALIDACIÓN (Maneja nulos de forma segura)
+    const propietario = props.propietario ? String(props.propietario).toLowerCase() : '';
+
+    // 2. FILTRO CRUCIAL: Solo procesa el polígono si el campo contiene la palabra 'comodato'
+    if (propietario.includes('arriendo')) {
+      
+      const codigoActual = props.código_actual || 'N/A';
+      const codigoAnterior = props.código_anterior || 'N/A';
+      const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
+      
+      tableRowsHTML += `
+        <tr>
+          <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${codigoActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
+        </tr>
+      `;
+    }
+  });
+
+  // 3. MENSAJE DE FALLBACK: Si ningún polígono coincide con el criterio
+  if (tableRowsHTML === '') {
+    tableRowsHTML = `<tr><td colspan="3" style="padding: 10px; text-align: center; color: #888;">No se encontraron comodatos activos</td></tr>`;
+  }
+
+  popupElement.innerHTML = `
+    <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
+      Comodatos
+    </h4>
+    <div style="max-height: 300px; overflow-y: auto;">
+      <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 14px;">
+        <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
+          <th style="padding: 6px; border: 1px solid #ddd;">Cód. Actual</th>
+          <th style="padding: 6px; border: 1px solid #ddd;">Cód. Ant.</th>
+          <th style="padding: 6px; border: 1px solid #ddd; text-align: center;">Zona</th>
+        </tr>
+        ${tableRowsHTML}
+      </table>
+    </div>
+  `;
+  
+  popupElement.style.display = 'block';
+}
+
+// 3. LISTEN TO INITIAL VISIBILITY TOGGLE
+polig_arriendo.on('change:visible', () => {
+  if (polig_arriendo.getVisible()) {
+    updateComodatoTable(); // Attempts to run immediately
+  } else {
+    popupElement.style.display = 'none'; // Hides instantly when unchecked
+  }
+});
+
+// 4. THE CRUCIAL FIX: If data arrives AFTER the user clicks, update the table instantly
+polig_arriendo.getSource().on('featuresloadend', () => {
+  // Only update the table if the user currently wants to see the layer
+  if (polig_arriendo.getVisible()) {
+    updateComodatoTable();
+  }
+});
 
 
 
