@@ -1096,6 +1096,19 @@ zonas.on('change:visible', () => {
   zonas_puntos.setVisible(isVisible);
 });
 
+zonas.on('prerender', (event) => {
+  const ctx = event.context;
+  ctx.save();
+  // 'source-atop' cuts off anything drawn outside existing fill areas
+  ctx.globalCompositeOperation = 'source-atop'; 
+});
+
+// 2. Restore the canvas back to normal immediately after rendering
+zonas.on('postrender', (event) => {
+  const ctx = event.context;
+  ctx.restore();
+});
+
 
 
 
@@ -1128,18 +1141,6 @@ const map = new ol.Map(
 //map.addLayer(lindero);
 
 
-zonas.on('prerender', (event) => {
-  const ctx = event.context;
-  ctx.save();
-  // 'source-atop' cuts off anything drawn outside existing fill areas
-  ctx.globalCompositeOperation = 'source-atop'; 
-});
-
-// 2. Restore the canvas back to normal immediately after rendering
-zonas.on('postrender', (event) => {
-  const ctx = event.context;
-  ctx.restore();
-});
 
 const layerSwitcher = new ol.control.LayerSwitcher(
 {
