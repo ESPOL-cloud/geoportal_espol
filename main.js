@@ -1570,8 +1570,8 @@ map.on('singleclick', function (evt) {
 
 
 
-
-// TABLA PARA COMODATO
+/*
+// TABLA PARA COMODATOS
 const popupElement = document.createElement('div');
 popupElement.id = 'comodato-map-control';
 popupElement.className = 'ol-unselectable ol-control'; 
@@ -1765,7 +1765,7 @@ polig_arriendo.getSource().on('featuresloadend', () => {
   }
 });
 
-
+*/
 
 
 
