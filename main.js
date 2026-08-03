@@ -877,19 +877,19 @@ edificaciones.on('change:visible', function() {
 // OPCION 2
 // Mediante QGIS convertir el shapefile a geojson 
 // Cambiar CRS de capa a 32717. Luego reproyectar la capa en Vector - Data Management - Reproyectar capa a 4326. 
-// Guardar la capa reproyectada como shapefile
+// Guardar la capa reproyectada como geojson
 
 const zonasStyle1 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(109, 100, 52, 1)', 
-    width: 6 
+    width: 12 
   })
 });
 
 const zonasStyle2 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(19, 114, 32, 1)', 
-    width: 6
+    width: 12
   })
 });
 
