@@ -882,14 +882,14 @@ edificaciones.on('change:visible', function() {
 const zonasStyle1 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(109, 100, 52, 1)', 
-    width: 12 
+    width: 6 
   })
 });
 
 const zonasStyle2 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(19, 114, 32, 1)', 
-    width: 12
+    width: 6
   })
 });
 
