@@ -1670,20 +1670,20 @@ polig_comodato.getSource().on('featuresloadend', () => {
 
 
 // TABLA PARA ARRIENDOS
-const popupElement = document.createElement('div');
-popupElement.id = 'arriendo-map-control';
-popupElement.className = 'ol-unselectable ol-control'; 
-popupElement.style.position = 'absolute';
-popupElement.style.bottom = '80px';       
-popupElement.style.left = '20px';         
-popupElement.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-popupElement.style.border = '1px solid #ccc';
-popupElement.style.borderRadius = '4px';
-popupElement.style.padding = '12px';
-popupElement.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
-popupElement.style.maxWidth = '350px';
-popupElement.style.zIndex = '1000';
-popupElement.style.display = 'none';      
+const popupElement_arriendo = document.createElement('div');
+popupElement_arriendo.id = 'arriendo-map-control';
+popupElement_arriendo.className = 'ol-unselectable ol-control'; 
+popupElement_arriendo.style.position = 'absolute';
+popupElement_arriendo.style.bottom = '80px';       
+popupElement_arriendo.style.left = '20px';         
+popupElement_arriendo.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+popupElement_arriendo.style.border = '1px solid #ccc';
+popupElement_arriendo.style.borderRadius = '4px';
+popupElement_arriendo.style.padding = '12px';
+popupElement_arriendo.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
+popupElement_arriendo.style.maxWidth = '350px';
+popupElement_arriendo.style.zIndex = '1000';
+popupElement_arriendo.style.display = 'none';      
 
 const arriendoTableControl = new ol.control.Control({ element: popupElement });
 map.addControl(arriendoTableControl);
@@ -1694,8 +1694,8 @@ function updateComodatoTable() {
   const features = source.getFeatures(); 
   
   if (features.length === 0) {
-    popupElement.innerHTML = `<div style="font-size:12px; color:#666; padding:10px;">Cargando datos...</div>`;
-    popupElement.style.display = 'block';
+    popupElement_arriendo.innerHTML = `<div style="font-size:12px; color:#666; padding:10px;">Cargando datos...</div>`;
+    popupElement_arriendo.style.display = 'block';
     return;
   }
 
@@ -1729,7 +1729,7 @@ function updateComodatoTable() {
     tableRowsHTML = `<tr><td colspan="3" style="padding: 10px; text-align: center; color: #888;">No se encontraron comodatos activos</td></tr>`;
   }
 
-  popupElement.innerHTML = `
+  popupElement_arriendo.innerHTML = `
     <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
       Comodatos
     </h4>
@@ -1745,7 +1745,7 @@ function updateComodatoTable() {
     </div>
   `;
   
-  popupElement.style.display = 'block';
+  popupElement_arriendo.style.display = 'block';
 }
 
 // 3. LISTEN TO INITIAL VISIBILITY TOGGLE
@@ -1753,7 +1753,7 @@ polig_arriendo.on('change:visible', () => {
   if (polig_arriendo.getVisible()) {
     updateComodatoTable(); // Attempts to run immediately
   } else {
-    popupElement.style.display = 'none'; // Hides instantly when unchecked
+    popupElement_arriendo.style.display = 'none'; // Hides instantly when unchecked
   }
 });
 
