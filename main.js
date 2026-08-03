@@ -258,6 +258,7 @@ const poligonosStyle14 = new ol.style.Style({
 
 const poligonos = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/polig_espol.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Edificaciones</b>',
   visible: false,
   style: function(feature) {
     const attributeValue = feature.get('propietario'); 
@@ -397,7 +398,7 @@ const polig_comodatoStyle = new ol.style.Style({
 
 const polig_comodato = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/polig_espol.geojson', format: new ol.format.GeoJSON() }),
-  title: 'COMODATOS',
+  title: '<b>Comodatos</b>',
   visible: false,
   style: function(feature) {
     const attributeValue = feature.get('propietario'); 
@@ -491,7 +492,7 @@ const polig_arriendoStyle = new ol.style.Style({
 
 const polig_arriendo = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/polig_espol.geojson', format: new ol.format.GeoJSON() }),
-  title: 'ARRIENDOS',
+  title: '<b>Arriendos</b>',
   visible: false,
   style: function(feature) {
     const attributeValue = feature.get('propietario'); 
@@ -779,7 +780,7 @@ const viaStyle = new ol.style.Style({
 
 const viasespol = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/lin_espol.geojson', format: new ol.format.GeoJSON() }),
-  title: 'Vías Espol',
+  title: '<b>Vías</b>',
   visible: false,
   style: function(feature) {
     const attributeValue = feature.get('name'); 
@@ -942,51 +943,36 @@ const zonasStyle9 = new ol.style.Style({
 });
 
 const zonasStyle10 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgb(255, 38, 23)'    
-  }),
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgb(255, 38, 23)', 
     width: 2 
   })
 });
 
 const zonasStyle11 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgba(120, 127, 128, 1)'    
-  }),
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgba(120, 127, 128, 1)', 
     width: 2 
   })
 });
 
 const zonasStyle12 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgb(20, 63, 126)'    
-  }),
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgb(20, 63, 126)', 
     width: 2 
   })
 });
 
 const zonasStyle13 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgba(126, 185, 111, 1)'    
-  }),
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgba(126, 185, 111, 1)', 
     width: 2 
   })
 });
 
 const zonasStyle14 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgba(196, 64, 178, 1)'    
-  }),
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgba(196, 64, 178, 1)', 
     width: 2 
   })
 });
@@ -1013,43 +999,43 @@ const zonas = new ol.layer.Vector({
       return zonasStyle1; 
     }
     else if (zona == 2) {
-      return poligonosStyle2; 
+      return zonasStyle2; 
     }
     else if (zona == 3) {
-      return poligonosStyle3; 
+      return zonasStyle3; 
     }
     else if (zona == 4) {
-      return poligonosStyle4; 
+      return zonasStyle4; 
     }
     else if (zona == 5) {
-      return poligonosStyle5; 
+      return zonasStyle5; 
     }
     else if (zona == 6) {
-      return poligonosStyle6; 
+      return zonasStyle6; 
     }
     else if (zona == 7) {
-      return poligonosStyle7; 
+      return zonasStyle7; 
     }
     else if (zona == 8) {
-     return poligonosStyle8; 
+     return zonasStyle8; 
     }
     else if (zona == 9) {
-      return poligonosStyle9; 
+      return zonasStyle9; 
     }
     else if (zona == 10) {
-      return poligonosStyle10; 
+      return zonasStyle10; 
     }
     else if (zona == 11) {
-      return poligonosStyle11; 
+      return zonasStyle11; 
     }
     else if (zona == 12) {
-      return poligonosStyle12; 
+      return zonasStyle12; 
     }
     else if (zona == 13) {
-      return poligonosStyle13; 
+      return zonasStyle13; 
     }
     else if (zona == 14) {
-      return poligonosStyle14; 
+      return zonasStyle14; 
     }
   
 
