@@ -1587,68 +1587,52 @@ popupContainer.style.display = 'none'; // Hidden by default
 document.body.appendChild(popupContainer);
 
 // 2. Define the specific HTML table for your COMODATOS layer
-document.addEventListener('click', function(e) {
-  const layerElement = e.target.closest('.layer-switcher label, .layer-switcher li');
+polig_comodato.on('change:visible', () => {
+  // Check if the layer checkbox is currently active/checked [1.1]
+  const isVisible = polig_comodato.getVisible(); 
   
-  if (layerElement) {
-    const layerTitle = layerElement.textContent.toLowerCase().trim();
-
-    // 1. Only run if the user clicked the 'comodato' layer checkbox
-    if (layerTitle.includes('comodato')) {
+  if (isVisible) {
+    // LAYER CHECKED: Extract data and build the table dynamically [1.1]
+    const source = polig_comodato.getSource();
+    const features = source.getFeatures(); // [1.1]
+    
+    let tableRowsHTML = '';
+    
+    features.forEach((feature) => {
+      const props = feature.getProperties(); // [1.1]
       
-      // 2. Get the vector source from your layer
-      const source = polig_comodato.getSource();
-      const features = source.getFeatures(); // Gets all polygon rows from the GeoJSON [1.1]
-
-      // 3. Start building the HTML table layout structure
-      let tableRowsHTML = '';
+      // Match these keys exactly to your GeoJSON properties
+      const propietario = props.propietario || 'N/A';
+      const zona = props.zona !== undefined ? props.zona : 'N/A';
       
-      // 4. Loop through every single polygon feature found in the file [1.1]
-      features.forEach((feature) => {
-        const props = feature.getProperties(); // Extracts the attribute columns [1.1]
-        
-        // Extract properties (adjust column names to match your GeoJSON fields exactly)
-        const referencia = props.referencia_inmueble || props.referencia || 'N/A';
-        const area = props.área_total_construcción || props.area || 'N/A';
-        const propietario = props.propietario || 'N/A';
-
-        // Append a new HTML row for this specific polygon
-        tableRowsHTML += `
-          <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">${referencia}</td>
-            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${area}</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${propietario}</td>
-          </tr>
-        `;
-      });
-
-      // 5. Combine the header, the dynamic rows, and the close button
-      const fullDynamicHTML = `
-        <h3 style="margin-top:0; color:#0064c8;">Inventario Total de Comodatos</h3>
-        <div style="max-height: 300px; overflow-y: auto;"> <!-- Adds a scrollbar if there are many polygons -->
-          <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 13px;">
-            <tr style="background-color: #f2f2f2; border-bottom: 2px solid #333;">
-              <th style="padding: 8px; border: 1px solid #ddd;">Ref. Inmueble</th>
-              <th style="padding: 8px; border: 1px solid #ddd;">Área (m²)</th>
-              <th style="padding: 8px; border: 1px solid #ddd;">Propietario</th>
-            </tr>
-            ${tableRowsHTML}
-          </table>
-        </div>
-        <button onclick="document.getElementById('comodato-legend-popup').style.display='none'" 
-                style="margin-top:15px; padding: 5px 10px; cursor: pointer; background: #0064c8; color: white; border: none; border-radius: 3px;">
-          Cerrar
-        </button>
+      tableRowsHTML += `
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;">${propietario}</td>
+          <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${zona}</td>
+        </tr>
       `;
+    });
 
-      // 6. Inject the content and display the pop-up panel
-      popupContainer.innerHTML = fullDynamicHTML;
-      popupContainer.style.display = 'block';
+    const fullDynamicHTML = `
+      <h3 style="margin-top:0; color:#0064c8; font-size:16px;">Polígonos en Comodato</h3>
+      <div style="max-height: 250px; overflow-y: auto;">
+        <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 13px;">
+          <tr style="background-color: #f2f2f2; border-bottom: 2px solid #333;">
+            <th style="padding: 8px; border: 1px solid #ddd;">Propietario</th>
+            <th style="padding: 8px; border: 1px solid #ddd;">Zona</th>
+          </tr>
+          ${tableRowsHTML}
+        </table>
+      </div>
+    `;
 
-    } else {
-      // Optional: Hide the pop-up if they click a different layer item
-      popupContainer.style.display = 'none';
-    }
+    // Inject content and show popup panel container
+    popupContainer.innerHTML = fullDynamicHTML;
+    popupContainer.style.display = 'block';
+
+  } else {
+    // LAYER UNCHECKED: Instantly hide the popup container
+    popupContainer.style.display = 'none';
   }
 });
 
