@@ -1107,11 +1107,11 @@ const map = new ol.Map(
         target: "map",
         layers: [
             basemap,
-            zonas,
-            zonas_puntos,
             viasespol,
             polig_arriendo,
             polig_comodato,
+            zonas,
+            zonas_puntos
             poligonos
         ], 
         view: new ol.View({
