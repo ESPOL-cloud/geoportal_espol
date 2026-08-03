@@ -882,7 +882,41 @@ edificaciones.on('change:visible', function() {
 const zonasStyle1 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(109, 100, 52, 1)', 
-    width: 6 
+    width: 6,
+
+    renderer: function(coordinates, state) {
+      const ctx = state.context;
+      
+      ctx.save();
+      ctx.beginPath();
+      
+      // Step 1: Trace the polygon coordinates onto the canvas context
+      coordinates.forEach((ring, i) => {
+        ring.forEach((point, j) => {
+          if (j === 0) {
+            ctx.moveTo(point[0], point[1]);
+          } else {
+            ctx.lineTo(point[0], point[1]);
+          }
+        });
+        if (i === 0) ctx.closePath();
+      });
+      
+      // Step 2: Clip the canvas context to the traced polygon path
+      ctx.clip();
+      
+      // Step 3: Draw a double-width stroke. 
+      // Because of the clip mask, the outside half is hidden, leaving your exact width inside.
+      ctx.lineWidth = state.strokeWidth * 2; 
+      ctx.strokeStyle = state.strokeStyle;
+      ctx.lineDash = state.lineDash;
+      ctx.lineCap = state.lineCap;
+      ctx.lineJoin = state.lineJoin;
+      ctx.miterLimit = state.miterLimit;
+      ctx.stroke();
+      
+      ctx.restore();
+    }
   })
 });
 
