@@ -951,7 +951,7 @@ const zonasStyle10 = new ol.style.Style({
   })
 });
 
-const poligonosStyle11 = new ol.style.Style({
+const zonasStyle11 = new ol.style.Style({
   fill: new ol.style.Fill({
     color: 'rgba(120, 127, 128, 1)'    
   }),
@@ -961,7 +961,7 @@ const poligonosStyle11 = new ol.style.Style({
   })
 });
 
-const poligonosStyle12 = new ol.style.Style({
+const zonasStyle12 = new ol.style.Style({
   fill: new ol.style.Fill({
     color: 'rgb(20, 63, 126)'    
   }),
@@ -971,7 +971,7 @@ const poligonosStyle12 = new ol.style.Style({
   })
 });
 
-const poligonosStyle13 = new ol.style.Style({
+const zonasStyle13 = new ol.style.Style({
   fill: new ol.style.Fill({
     color: 'rgba(126, 185, 111, 1)'    
   }),
@@ -981,7 +981,7 @@ const poligonosStyle13 = new ol.style.Style({
   })
 });
 
-const poligonosStyle14 = new ol.style.Style({
+const zonasStyle14 = new ol.style.Style({
   fill: new ol.style.Fill({
     color: 'rgba(196, 64, 178, 1)'    
   }),
