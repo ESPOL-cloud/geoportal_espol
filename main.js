@@ -885,87 +885,63 @@ const zonasStyle1 = new ol.style.Style({
   })
 });
 
-const poligonosStyle2 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgba(19, 114, 32, 1)'  
-  }),
+const zonasStyle2 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgba(19, 114, 32, 1)', 
     width: 2 
   })
 });
 
-const poligonosStyle3 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgb(87, 226, 106)'    
-  }),
+const zonasStyle3 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgb(87, 226, 106)', 
     width: 2 
   })
 });
 
-const poligonosStyle4 = new ol.style.Style({
-  fill: new ol.style.Fill({
+const zonasStyle4 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
     color: 'rgba(26, 67, 128, 1)'   
-  }),
-  stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
     width: 2 
   })
 });
 
-const poligonosStyle5 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgba(103, 196, 196, 1)'    
-  }),
+const zonasStyle5 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgba(103, 196, 196, 1)', 
     width: 2 
   })
 });
 
-const poligonosStyle6 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgba(15, 15, 15, 1)'    
-  }),
+const zonasStyle6 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgba(15, 15, 15, 1)', 
     width: 2 
   })
 });
 
-const poligonosStyle7 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgb(236, 110, 26)'  
-  }),
+const zonasStyle7 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgb(236, 110, 26)', 
     width: 2 
   })
 });
 
-const poligonosStyle8 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgb(250, 235, 29)'   
-  }),
+const zonasStyle8 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgb(250, 235, 29)', 
     width: 2 
   })
 });
 
-const poligonosStyle9 = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: 'rgb(81, 11, 173)'  
-  }),
+const zonasStyle9 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: 'rgb(81, 11, 173)', 
     width: 2 
   })
 });
 
-const poligonosStyle10 = new ol.style.Style({
+const zonasStyle10 = new ol.style.Style({
   fill: new ol.style.Fill({
     color: 'rgb(255, 38, 23)'    
   }),
