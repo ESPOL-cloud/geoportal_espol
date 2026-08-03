@@ -12,7 +12,7 @@ lindero_geom.transform('EPSG:4326', 'EPSG:3857');
 
 const fillStyle = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'black' // No importa el color, funciona como opacity mask
+    color: '#e7f520' // No importa el color, funciona como opacity mask
   })
 });
 
@@ -397,7 +397,7 @@ const polig_comodatoStyle = new ol.style.Style({
 
 const polig_comodato = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/polig_espol.geojson', format: new ol.format.GeoJSON() }),
-  title: 'COMODATO',
+  title: 'COMODATOS',
   visible: false,
   style: function(feature) {
     const attributeValue = feature.get('propietario'); 
@@ -491,7 +491,7 @@ const polig_arriendoStyle = new ol.style.Style({
 
 const polig_arriendo = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/polig_espol.geojson', format: new ol.format.GeoJSON() }),
-  title: 'ARRIENDO',
+  title: 'ARRIENDOS',
   visible: false,
   style: function(feature) {
     const attributeValue = feature.get('propietario'); 
@@ -1000,10 +1000,12 @@ const map = new ol.Map(
         target: "map",
         layers: [
             basemap,
-            vias,
-            infraestructura,
             zonas,
-            zonas_puntos
+            zonas_puntos,
+            viasespol,
+            polig_arriendo,
+            polig_comodato,
+            poligonos
         ], 
         view: new ol.View({
             center: new ol.proj.fromLonLat([-79.964506 , -2.148383]),
