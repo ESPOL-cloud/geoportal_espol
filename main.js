@@ -1588,38 +1588,41 @@ document.body.appendChild(popupContainer);
 
 // 2. Define the specific HTML table for your COMODATOS layer
 polig_comodato.on('change:visible', () => {
-  // Check if the layer checkbox is currently active/checked [1.1]
+  // Check if the layer checkbox is currently active/checked
   const isVisible = polig_comodato.getVisible(); 
   
   if (isVisible) {
-    // LAYER CHECKED: Extract data and build the table dynamically [1.1]
+    // LAYER CHECKED: Extract data and build the table dynamically
     const source = polig_comodato.getSource();
-    const features = source.getFeatures(); // [1.1]
+    const features = source.getFeatures(); 
     
     let tableRowsHTML = '';
     
     features.forEach((feature) => {
-      const props = feature.getProperties(); // [1.1]
+      const props = feature.getProperties(); 
       
-      // Match these keys exactly to your GeoJSON properties
-      const propietario = props.propietario || 'N/A';
-      const zona = props.zona !== undefined ? props.zona : 'N/A';
+      // Extract properties matching your exact accent marks and casings
+      const codigoActual = props.código_actual || 'N/A';
+      const codigoAnterior = props.código_anterior || 'N/A';
+      const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
       
       tableRowsHTML += `
         <tr>
-          <td style="padding: 8px; border: 1px solid #ddd;">${propietario}</td>
+          <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: #333;">${codigoActual}</td>
+          <td style="padding: 8px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
           <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${zona}</td>
         </tr>
       `;
     });
 
     const fullDynamicHTML = `
-      <h3 style="margin-top:0; color:#0064c8; font-size:16px;">Polígonos en Comodato</h3>
+      <h3 style="margin-top:0; color:#0064c8; font-size:16px;">Inventario de Comodatos</h3>
       <div style="max-height: 250px; overflow-y: auto;">
         <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 13px;">
           <tr style="background-color: #f2f2f2; border-bottom: 2px solid #333;">
-            <th style="padding: 8px; border: 1px solid #ddd;">Propietario</th>
-            <th style="padding: 8px; border: 1px solid #ddd;">Zona</th>
+            <th style="padding: 8px; border: 1px solid #ddd;">Código Actual</th>
+            <th style="padding: 8px; border: 1px solid #ddd;">Código Anterior</th>
+            <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Zona</th>
           </tr>
           ${tableRowsHTML}
         </table>
