@@ -1572,6 +1572,21 @@ map.on('singleclick', function (evt) {
 
 
 // TABLA PARA COMODATO
+
+const popupContainer = document.createElement('div');
+popupContainer.id = 'comodato-legend-popup';
+popupContainer.style.position = 'fixed';
+popupContainer.style.top = '75%';
+popupContainer.style.left = '5%';
+popupContainer.style.backgroundColor = '#ffffff';
+popupContainer.style.border = '2px solid #0064c8';
+popupContainer.style.padding = '20px';
+popupContainer.style.boxShadow = '0px 4px 10px rgba(0,0,0,0.3)';
+popupContainer.style.zIndex = '9999';
+popupContainer.style.display = 'none'; // Hidden by default
+document.body.appendChild(popupContainer);
+
+// 2. Define the specific HTML table for your COMODATOS layer
 document.addEventListener('click', function(e) {
   const layerElement = e.target.closest('.layer-switcher label, .layer-switcher li');
   
