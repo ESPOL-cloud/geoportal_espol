@@ -12,7 +12,7 @@ lindero_geom.transform('EPSG:4326', 'EPSG:3857');
 
 const fillStyle = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: '#e7f520' // No importa el color, funciona como opacity mask
+    color: '#111111' // No importa el color, funciona como opacity mask
   })
 });
 
@@ -39,7 +39,7 @@ const lindero_localVectorSource = new ol.source.Vector({
 // 5. Apply your custom styling
 const lindero_vectorStyle = new ol.style.Style({
   stroke: new ol.style.Stroke({
-    color: '#141313',
+    color: '#edf030',
     width: 3,
   }),
 });
