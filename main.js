@@ -901,7 +901,7 @@ const zonasStyle3 = new ol.style.Style({
 
 const zonasStyle4 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: 'rgba(26, 67, 128, 1)'   
+    color: 'rgba(26, 67, 128, 1)',   
     width: 2 
   })
 });
