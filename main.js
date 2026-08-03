@@ -886,35 +886,37 @@ const zonasStyle1 = new ol.style.Style({
 
     renderer: function(coordinates, state) {
       const ctx = state.context;
-      
       ctx.save();
+      
+      // Begin path tracking
       ctx.beginPath();
       
-      // Step 1: Trace the polygon coordinates onto the canvas context
-      coordinates.forEach((ring, i) => {
-        ring.forEach((point, j) => {
-          if (j === 0) {
+      // Step 1: Handle MultiPolygons or Single Polygons safely
+      const rings = Array.isArray(coordinates[0][0]) ? coordinates[0] : coordinates;
+      
+      rings.forEach((ring) => {
+        ring.forEach((point, index) => {
+          if (index === 0) {
             ctx.moveTo(point[0], point[1]);
           } else {
             ctx.lineTo(point[0], point[1]);
           }
         });
-        if (i === 0) ctx.closePath();
+        ctx.closePath();
       });
-      
-      // Step 2: Clip the canvas context to the traced polygon path
+
+      // Step 2: Mask everything except the inside area of your polygon geometry 
       ctx.clip();
-      
-      // Step 3: Draw a double-width stroke. 
-      // Because of the clip mask, the outside half is hidden, leaving your exact width inside.
-      ctx.lineWidth = state.strokeWidth * 2; 
+
+      // Step 3: Draw the border at double thickness. 
+      // The canvas clip drops the outside pixels cleanly.
+      ctx.lineWidth = state.strokeWidth * 2;
       ctx.strokeStyle = state.strokeStyle;
-      ctx.lineDash = state.lineDash;
+      ctx.setLineDash(state.lineDash || []);
       ctx.lineCap = state.lineCap;
       ctx.lineJoin = state.lineJoin;
-      ctx.miterLimit = state.miterLimit;
       ctx.stroke();
-      
+
       ctx.restore();
     }
   })
