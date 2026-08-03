@@ -1571,6 +1571,63 @@ map.on('singleclick', function (evt) {
 
 
 
+// TABLA PARA COMODATO
+
+const popupContainer = document.createElement('div');
+popupContainer.id = 'comodato-legend-popup';
+popupContainer.style.position = 'fixed';
+popupContainer.style.top = '25%';
+popupContainer.style.left = '35%';
+popupContainer.style.backgroundColor = '#ffffff';
+popupContainer.style.border = '2px solid #0064c8';
+popupContainer.style.padding = '20px';
+popupContainer.style.boxShadow = '0px 4px 10px rgba(0,0,0,0.3)';
+popupContainer.style.zIndex = '9999';
+popupContainer.style.display = 'none'; // Hidden by default
+document.body.appendChild(popupContainer);
+
+// 2. Define the specific HTML table for your COMODATOS layer
+const comodatoTableHTML = `
+  <h3 style="margin-top:0; color:#0064c8;">Resumen de Comodatos</h3>
+  <table border="1" cellpadding="5" style="border-collapse: collapse; text-align: left; width: 100%;">
+    <tr style="background-color: #f2f2f2;">
+      <th>Referencia</th>
+      <th>Área (m²)</th>
+      <th>Estado</th>
+    </tr>
+    <tr>
+      <td>Polígono Arriendo</td>
+      <td>1,200</td>
+      <td>Vigente</td>
+    </tr>
+    <tr>
+      <td>Polígono Comodato</td>
+      <td>450</td>
+      <td>En Revisión</td>
+    </tr>
+  </table>
+  <button onclick="document.getElementById('comodato-legend-popup').style.display='none'" style="margin-top:15px; padding: 5px 10px; cursor: pointer;">Cerrar</button>
+`;
+
+// 3. Monitor the Layer Switcher for clicks
+document.addEventListener('click', function(e) {
+  // Find the label or list item element inside your layer switcher
+  const layerElement = e.target.closest('.layer-switcher label, .layer-switcher li');
+  
+  if (layerElement) {
+    // Extract text and convert to lowercase to handle any spelling mismatches
+    const layerTitle = layerElement.textContent.toLowerCase().trim();
+
+    // CRUCIAL CONDITION: Check if the clicked layer name contains 'comodato'
+    if (layerTitle.includes('comodato')) {
+      popupContainer.innerHTML = comodatoTableHTML;
+      popupContainer.style.display = 'block';
+    } else {
+      // Optional: Hide the pop-up if the user clicks any other layer checkbox
+      popupContainer.style.display = 'none';
+    }
+  }
+});
 
 
 
