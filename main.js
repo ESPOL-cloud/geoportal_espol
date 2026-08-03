@@ -1689,7 +1689,7 @@ const arriendoTableControl = new ol.control.Control({ element: popupElement });
 map.addControl(arriendoTableControl);
 
 // 2. SEPARATED FUNCTION: This builds and displays the table safely
-function updateComodatoTable() {
+function updateArriendoTable() {
   const source = polig_arriendo.getSource();
   const features = source.getFeatures(); 
   
@@ -1707,7 +1707,7 @@ function updateComodatoTable() {
     // 1. EXTRAE EL PROPIETARIO PARA VALIDACIÓN (Maneja nulos de forma segura)
     const propietario = props.propietario ? String(props.propietario).toLowerCase() : '';
 
-    // 2. FILTRO CRUCIAL: Solo procesa el polígono si el campo contiene la palabra 'comodato'
+    // 2. FILTRO CRUCIAL: Solo procesa el polígono si el campo contiene la palabra 'arriendo'
     if (propietario.includes('arriendo')) {
       
       const codigoActual = props.código_actual || 'N/A';
@@ -1731,7 +1731,7 @@ function updateComodatoTable() {
 
   popupElement_arriendo.innerHTML = `
     <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
-      Comodatos
+      Arriendos
     </h4>
     <div style="max-height: 300px; overflow-y: auto;">
       <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 14px;">
@@ -1751,7 +1751,7 @@ function updateComodatoTable() {
 // 3. LISTEN TO INITIAL VISIBILITY TOGGLE
 polig_arriendo.on('change:visible', () => {
   if (polig_arriendo.getVisible()) {
-    updateComodatoTable(); // Attempts to run immediately
+    updateArriendoTable(); // Attempts to run immediately
   } else {
     popupElement_arriendo.style.display = 'none'; // Hides instantly when unchecked
   }
@@ -1761,7 +1761,7 @@ polig_arriendo.on('change:visible', () => {
 polig_arriendo.getSource().on('featuresloadend', () => {
   // Only update the table if the user currently wants to see the layer
   if (polig_arriendo.getVisible()) {
-    updateComodatoTable();
+    updateArriendoTable();
   }
 });
 
