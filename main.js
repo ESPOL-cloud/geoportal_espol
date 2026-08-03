@@ -1109,7 +1109,9 @@ const map = new ol.Map(
             basemap,
             viasespol,
             polig_arriendo,
+            puntos_arriendo,
             polig_comodato,
+            puntos_comodato,
             zonas,
             zonas_puntos,
             poligonos, // edificaciones
