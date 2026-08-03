@@ -877,6 +877,151 @@ edificaciones.on('change:visible', function() {
 // Mediante QGIS convertir el shapefile a geojson 
 // Cambiar CRS de capa a 32717. Luego reproyectar la capa en Vector - Data Management - Reproyectar capa a 4326. 
 // Guardar la capa reproyectada como shapefile
+
+const zonasStyle1 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: 'rgba(109, 100, 52, 1)', 
+    width: 2 
+  })
+});
+
+const poligonosStyle2 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(19, 114, 32, 1)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle3 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(87, 226, 106)'    
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle4 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(26, 67, 128, 1)'   
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle5 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(103, 196, 196, 1)'    
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle6 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(15, 15, 15, 1)'    
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle7 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(236, 110, 26)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle8 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(250, 235, 29)'   
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle9 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(81, 11, 173)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle10 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(255, 38, 23)'    
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle11 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(120, 127, 128, 1)'    
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle12 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(20, 63, 126)'    
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle13 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(126, 185, 111, 1)'    
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const poligonosStyle14 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(196, 64, 178, 1)'    
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+
+
+
+
+
+
+
 const zonas = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/zonas_espol.geojson', format: new ol.format.GeoJSON() }),
   title: '<b>Zonas</b>',
@@ -889,7 +1034,7 @@ const zonas = new ol.layer.Vector({
     }
 
     if (zona == 1) {
-      return poligonosStyle1; 
+      return zonasStyle1; 
     }
     else if (zona == 2) {
       return poligonosStyle2; 
