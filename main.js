@@ -1596,8 +1596,6 @@ function updateComodatoTable() {
   const source = polig_comodato.getSource();
   const features = source.getFeatures(); 
   
-  // If the layer is checked but features aren't loaded into the source yet, do nothing.
-  // The 'featuresloadend' listener below will automatically catch it when they arrive.
   if (features.length === 0) {
     popupElement.innerHTML = `<div style="font-size:12px; color:#666; padding:10px;">Cargando datos...</div>`;
     popupElement.style.display = 'block';
@@ -1608,18 +1606,31 @@ function updateComodatoTable() {
   
   features.forEach((feature) => {
     const props = feature.getProperties(); 
-    const codigoActual = props.código_actual || 'N/A';
-    const codigoAnterior = props.código_anterior || 'N/A';
-    const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
     
-    tableRowsHTML += `
-      <tr>
-        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${codigoActual}</td>
-        <td style="padding: 6px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
-        <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
-      </tr>
-    `;
+    // 1. EXTRAE EL PROPIETARIO PARA VALIDACIÓN (Maneja nulos de forma segura)
+    const propietario = props.propietario ? String(props.propietario).toLowerCase() : '';
+
+    // 2. FILTRO CRUCIAL: Solo procesa el polígono si el campo contiene la palabra 'comodato'
+    if (propietario.includes('comodato')) {
+      
+      const codigoActual = props.código_actual || 'N/A';
+      const codigoAnterior = props.código_anterior || 'N/A';
+      const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
+      
+      tableRowsHTML += `
+        <tr>
+          <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${codigoActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
+        </tr>
+      `;
+    }
   });
+
+  // 3. MENSAJE DE FALLBACK: Si ningún polígono coincide con el criterio
+  if (tableRowsHTML === '') {
+    tableRowsHTML = `<tr><td colspan="3" style="padding: 10px; text-align: center; color: #888;">No se encontraron comodatos activos</td></tr>`;
+  }
 
   popupElement.innerHTML = `
     <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
