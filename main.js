@@ -867,7 +867,7 @@ edificaciones.on('change:visible', function() {
 
 
 
-/*
+
 // ZONAS
 // OPCION 1
 // De Civil 3D se obtienen las zonas mediante MAPEXPORT (se exportan como líneas) como shapefile shp. 
@@ -989,7 +989,7 @@ zonas.on('change:visible', () => {
   zonas_puntos.setVisible(isVisible);
 });
 
-*/
+
 
 
 
