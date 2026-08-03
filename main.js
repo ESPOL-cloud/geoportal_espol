@@ -1572,58 +1572,66 @@ map.on('singleclick', function (evt) {
 
 
 // TABLA PARA COMODATO
-
-const popupContainer = document.createElement('div');
-popupContainer.id = 'comodato-legend-popup';
-popupContainer.style.position = 'fixed';
-popupContainer.style.top = '25%';
-popupContainer.style.left = '35%';
-popupContainer.style.backgroundColor = '#ffffff';
-popupContainer.style.border = '2px solid #0064c8';
-popupContainer.style.padding = '20px';
-popupContainer.style.boxShadow = '0px 4px 10px rgba(0,0,0,0.3)';
-popupContainer.style.zIndex = '9999';
-popupContainer.style.display = 'none'; // Hidden by default
-document.body.appendChild(popupContainer);
-
-// 2. Define the specific HTML table for your COMODATOS layer
-const comodatoTableHTML = `
-  <h3 style="margin-top:0; color:#0064c8;">Resumen de Comodatos</h3>
-  <table border="1" cellpadding="5" style="border-collapse: collapse; text-align: left; width: 100%;">
-    <tr style="background-color: #f2f2f2;">
-      <th>Referencia</th>
-      <th>Área (m²)</th>
-      <th>Estado</th>
-    </tr>
-    <tr>
-      <td>Polígono Arriendo</td>
-      <td>1,200</td>
-      <td>Vigente</td>
-    </tr>
-    <tr>
-      <td>Polígono Comodato</td>
-      <td>450</td>
-      <td>En Revisión</td>
-    </tr>
-  </table>
-  <button onclick="document.getElementById('comodato-legend-popup').style.display='none'" style="margin-top:15px; padding: 5px 10px; cursor: pointer;">Cerrar</button>
-`;
-
-// 3. Monitor the Layer Switcher for clicks
 document.addEventListener('click', function(e) {
-  // Find the label or list item element inside your layer switcher
   const layerElement = e.target.closest('.layer-switcher label, .layer-switcher li');
   
   if (layerElement) {
-    // Extract text and convert to lowercase to handle any spelling mismatches
     const layerTitle = layerElement.textContent.toLowerCase().trim();
 
-    // CRUCIAL CONDITION: Check if the clicked layer name contains 'comodato'
+    // 1. Only run if the user clicked the 'comodato' layer checkbox
     if (layerTitle.includes('comodato')) {
-      popupContainer.innerHTML = comodatoTableHTML;
+      
+      // 2. Get the vector source from your layer
+      const source = polig_comodato.getSource();
+      const features = source.getFeatures(); // Gets all polygon rows from the GeoJSON [1.1]
+
+      // 3. Start building the HTML table layout structure
+      let tableRowsHTML = '';
+      
+      // 4. Loop through every single polygon feature found in the file [1.1]
+      features.forEach((feature) => {
+        const props = feature.getProperties(); // Extracts the attribute columns [1.1]
+        
+        // Extract properties (adjust column names to match your GeoJSON fields exactly)
+        const referencia = props.referencia_inmueble || props.referencia || 'N/A';
+        const area = props.área_total_construcción || props.area || 'N/A';
+        const propietario = props.propietario || 'N/A';
+
+        // Append a new HTML row for this specific polygon
+        tableRowsHTML += `
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">${referencia}</td>
+            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${area}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${propietario}</td>
+          </tr>
+        `;
+      });
+
+      // 5. Combine the header, the dynamic rows, and the close button
+      const fullDynamicHTML = `
+        <h3 style="margin-top:0; color:#0064c8;">Inventario Total de Comodatos</h3>
+        <div style="max-height: 300px; overflow-y: auto;"> <!-- Adds a scrollbar if there are many polygons -->
+          <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 13px;">
+            <tr style="background-color: #f2f2f2; border-bottom: 2px solid #333;">
+              <th style="padding: 8px; border: 1px solid #ddd;">Ref. Inmueble</th>
+              <th style="padding: 8px; border: 1px solid #ddd;">Área (m²)</th>
+              <th style="padding: 8px; border: 1px solid #ddd;">Propietario</th>
+            </tr>
+            ${tableRowsHTML}
+          </table>
+        </div>
+        <button onclick="document.getElementById('comodato-legend-popup').style.display='none'" 
+                style="margin-top:15px; padding: 5px 10px; cursor: pointer; background: #0064c8; color: white; border: none; border-radius: 3px;">
+          Cerrar
+        </button>
+      `;
+
+      // 6. Inject the content and display the pop-up panel
+      popupContainer.innerHTML = fullDynamicHTML;
       popupContainer.style.display = 'block';
+
     } else {
-      // Optional: Hide the pop-up if the user clicks any other layer checkbox
+      // Optional: Hide the pop-up if they click a different layer item
       popupContainer.style.display = 'none';
     }
   }
