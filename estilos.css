@@ -58,8 +58,10 @@
 /*}
 */
 
+
 /* Quita el checkbox de los grupos principales
 */
+/*
 .layer-switcher li.group > input[type="checkbox"] {
   display: none !important;
 }
@@ -68,11 +70,13 @@
 .layer-switcher li.group li.group > input[type="checkbox"] {
   display: inline-block !important;
 }
+*/
+
 
 /* Modificar según el espacio que ocupaba el checkbox */
 /* Para grupos principales  */
 .layer-switcher li.group > label {
-  padding-left: 25px !important;
+  padding-left: 42px !important;
   font-weight: bold !important;
 }
 /* Para subgrupos  */
@@ -90,4 +94,37 @@
 
 .layer-switcher label input {
   pointer-events: auto; 
+}
+
+
+/* Para mover el checkbox en títulos que tengan line break (más de una línea) en el layer switcher */
+.layer-switcher label {
+    white-space: pre-line;
+    display: inline-block;
+    vertical-align: top;
+    line-height: 1.4; 
+}
+
+.layer-switcher input[type="checkbox"] {
+    margin-top: 3px;       /* Push the checkbox down */
+    vertical-align: top;   /* Ensures it aligns with the top of the text */
+}
+
+
+/* Para mover la flecha en el layer switcher */
+.layer-switcher li.layer-switcher-fold button {
+    vertical-align: top !important;
+    margin-top: 3px !important;    /* Match the exact pixel offset you gave your checkbox */
+    display: inline-block;         /* Ensures vertical-align and margins work properly */
+}
+
+
+
+/* Para cambiar el tamaño de letra de los subgrupos del layer switcher */
+.layer-switcher ul ul li label {
+    font-size: 14px;          /* Slightly smaller text for subgroups */
+    line-height: 1.5;         /* Increases vertical space between wrapped lines */
+    /*padding-top: 6px;         /* Adds vertical space above the text */
+    /*padding-bottom: 6px;      /* Adds vertical space below the text */  
+    display: inline-block;
 }
