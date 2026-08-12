@@ -1,6 +1,6 @@
 /** @type {typeof import('ol')} */
 // EL PUERTO DEL SERVER ES 5500, NO 8080
-const source = "http://200.126.24.171:8080" // Puede ser ip (poner la ip actualizada) o https://localhost:8080
+const source = "http://200.126.24.196:8080" // Puede ser ip (poner la ip actualizada) o https://localhost:8080
 
 
 // Coordenadas de puntos del lindero obtenido con Google Maps y transformado a coordenadas GeoJSON con Mapshaper
@@ -570,7 +570,7 @@ const puntos = new ol.layer.Tile({
 
 const puntosStyle = new ol.style.Style({
   image: new ol.style.Circle({
-    radius: 3, 
+    radius: 0, 
     fill: new ol.style.Fill({
       color: 'rgba(47, 49, 51, 0.9)' 
     }),
@@ -749,6 +749,241 @@ const edificaciones = new ol.layer.Group({
   fold: 'close',
 });
 
+
+
+
+
+// COMODATOS Y ARRIENDOS
+const puntos_arriendos = new ol.layer.Vector({    // NO CONFUNDIR CON puntos_arriendo
+  source: new ol.source.Vector({ 
+    url: './capas/arriendos.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  visible: false,
+  style: function(feature, resolution) {
+
+    if (resolution < 0.8) {
+      const codigo = feature.get('ref') || '';
+      const codigoAct = feature.get('cod_act') || '';
+      let labelText = codigo; 
+        
+      if (codigoAct) {
+        labelText += `\nCod. Act:  ${codigoAct}`;
+      }
+      
+      // 1. Configure the text string on your existing text style object
+      puntosStyle.getText().setText(labelText);
+
+      // 2. Safely find the center coordinate regardless of Polygon vs MultiPolygon
+      const geom = feature.getGeometry();
+      const type = geom.getType();
+      let interiorPoint = null;
+
+      if (type === 'Polygon') {
+        interiorPoint = geom.getInteriorPoint();
+      } else if (type === 'MultiPolygon') {
+        interiorPoint = geom.getInteriorPoints().getPoint(0);
+      }
+
+      // 3. Create a dedicated text-only style to place at the center
+      const labelStyle = new ol.style.Style({
+        text: puntosStyle.getText(), // Reuses your defined fonts, fills, strokes
+        geometry: interiorPoint      // Anchors ONLY the text to the centroid
+      });
+
+      // 4. Return BOTH styles: the original polygon shape AND the text label on top
+      return [puntosStyle, labelStyle];
+      
+    } else {
+      // Clean fallback: Clear text string and only return the standard polygon style
+      puntosStyle.getText().setText('');
+      return [puntosStyle];
+    }
+  }
+});
+
+
+
+const arriendos = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/arriendos.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Arriendos</b>',
+  visible: false,
+  style: function(feature) {
+    const attributeValue = feature.get('ref'); 
+    const zona = feature.get('zona');
+    if (attributeValue === null && attributeValue === undefined && String(attributeValue).trim() === '') {  // Quita las celdas null
+      return null; // Oculta el polígono si el campo está vacío o es nulo
+    }
+
+    if (zona == 1) {
+      return poligonosStyle1; 
+    }
+    else if (zona == 2) {
+      return poligonosStyle2; 
+    }
+    else if (zona == 3) {
+      return poligonosStyle3; 
+    }
+    else if (zona == 4) {
+      return poligonosStyle4; 
+    }
+    else if (zona == 5) {
+      return poligonosStyle5; 
+    }
+    else if (zona == 6) {
+      return poligonosStyle6; 
+    }
+    else if (zona == 7) {
+      return poligonosStyle7; 
+    }
+    else if (zona == 8) {
+     return poligonosStyle8; 
+    }
+    else if (zona == 9) {
+      return poligonosStyle9; 
+    }
+    else if (zona == 10) {
+      return poligonosStyle10; 
+    }
+    else if (zona == 11) {
+      return poligonosStyle11; 
+    }
+    else if (zona == 12) {
+      return poligonosStyle12; 
+    }
+    else if (zona == 13) {
+      return poligonosStyle13; 
+    }
+    else if (zona == 14) {
+      return poligonosStyle14; 
+    }
+
+    }
+});
+
+
+arriendos.on('change:visible', () => {
+  const isVisible = arriendos.getVisible();
+  puntos_arriendos.setVisible(isVisible);
+});
+
+
+
+
+
+
+const puntos_comodatos = new ol.layer.Vector({    // NO CONFUNDIR CON puntos_comodato
+  source: new ol.source.Vector({ 
+    url: './capas/comodatos.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  visible: false,
+  style: function(feature, resolution) {
+
+    if (resolution < 0.8) {
+      const codigo = feature.get('ref') || '';
+      const codigoAct = feature.get('cod_act') || '';
+      let labelText = codigo; 
+        
+      if (codigoAct) {
+        labelText += `\nCod. Act:  ${codigoAct}`;
+      }
+      
+      // 1. Configure the text string on your existing text style object
+      puntosStyle.getText().setText(labelText);
+
+      // 2. Safely find the center coordinate regardless of Polygon vs MultiPolygon
+      const geom = feature.getGeometry();
+      const type = geom.getType();
+      let interiorPoint = null;
+
+      if (type === 'Polygon') {
+        interiorPoint = geom.getInteriorPoint();
+      } else if (type === 'MultiPolygon') {
+        interiorPoint = geom.getInteriorPoints().getPoint(0);
+      }
+
+      // 3. Create a dedicated text-only style to place at the center
+      const labelStyle = new ol.style.Style({
+        text: puntosStyle.getText(), // Reuses your defined fonts, fills, strokes
+        geometry: interiorPoint      // Anchors ONLY the text to the centroid
+      });
+
+      // 4. Return BOTH styles: the original polygon shape AND the text label on top
+      return [puntosStyle, labelStyle];
+      
+    } else {
+      // Clean fallback: Clear text string and only return the standard polygon style
+      puntosStyle.getText().setText('');
+      return [puntosStyle];
+    }
+  }
+});
+
+
+
+const comodatos = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/comodatos.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Comodatos</b>',
+  visible: false,
+  style: function(feature) {
+    const attributeValue = feature.get('ref'); 
+    const zona = feature.get('zona');
+    if (attributeValue === null && attributeValue === undefined && String(attributeValue).trim() === '') {  // Quita las celdas null
+      return null; // Oculta el polígono si el campo está vacío o es nulo
+    }
+
+    if (zona == 1) {
+      return poligonosStyle1; 
+    }
+    else if (zona == 2) {
+      return poligonosStyle2; 
+    }
+    else if (zona == 3) {
+      return poligonosStyle3; 
+    }
+    else if (zona == 4) {
+      return poligonosStyle4; 
+    }
+    else if (zona == 5) {
+      return poligonosStyle5; 
+    }
+    else if (zona == 6) {
+      return poligonosStyle6; 
+    }
+    else if (zona == 7) {
+      return poligonosStyle7; 
+    }
+    else if (zona == 8) {
+     return poligonosStyle8; 
+    }
+    else if (zona == 9) {
+      return poligonosStyle9; 
+    }
+    else if (zona == 10) {
+      return poligonosStyle10; 
+    }
+    else if (zona == 11) {
+      return poligonosStyle11; 
+    }
+    else if (zona == 12) {
+      return poligonosStyle12; 
+    }
+    else if (zona == 13) {
+      return poligonosStyle13; 
+    }
+    else if (zona == 14) {
+      return poligonosStyle14; 
+    }
+
+    }
+});
+
+
+comodatos.on('change:visible', () => {
+  const isVisible = comodatos.getVisible();
+  puntos_comodatos.setVisible(isVisible);
+});
 
 
 
@@ -1137,21 +1372,812 @@ zonas.on('change:visible', () => {
 
 
 
+// PARQUEOS
+// Se utiliza DWG de Implantacion general, parqueos y areas de circulacion
+// Antes de seleccionar parqueos usar comando UNGROUP - all - Y (para quitar todos los grupos de parqueos y solo tener polilineas)
+// Eliminar las polilineas de color Blue para no duplicar parqueos
+// Eliminar 2 parqueos incorrectos en zona 4
+// Seleccionar solo las polilineas con area igual a: 12.5, 20, 27.2, 36, 40
+// Hay 1741 parqueos
+
+const parqueosStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(224, 198, 46)'
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+
+const parqueos = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/parqueos.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Parqueos</b>',
+  visible: false,
+  style: parqueosStyle
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CICLOVIA
+const cicloviaStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 4 
+  })
+});
+
+const ciclovia_existente = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/ciclovia_ex.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Ciclovía existente</b>',
+  visible: false,
+  style: cicloviaStyle
+});
+
+
+const ciclovia_proyectada = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/ciclovia_pry.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Ciclovía proyectada</b>',
+  visible: false,
+  style: cicloviaStyle
+});
+
+
+
+
+
+// BOSQUES
+const bosquesColor = 'rgba(43, 141, 87, 1)'
+const bosquesStyle = new ol.style.Style({
+  fill: new ol.style.Fill({ 
+    color: bosquesColor, 
+  }),
+    stroke: new ol.style.Stroke({ 
+    color: bosquesColor, 
+    width: 4 
+  })
+});
+
+const bosquesColor1 = 'rgba(43, 141, 87, 0.8)'
+const bosquesStyle1 = new ol.style.Style({
+  fill: new ol.style.Fill({ 
+    color: bosquesColor1, 
+  }),
+    stroke: new ol.style.Stroke({ 
+    color: bosquesColor1, 
+    width: 4 
+  })
+});
+
+const bosquesColor2 = 'rgba(27, 104, 143, 0.8)'
+const bosquesStyle2 = new ol.style.Style({
+  fill: new ol.style.Fill({ 
+    color: bosquesColor2, 
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: bosquesColor2, 
+    width: 4 
+  })
+});
+
+const bosquesColor3 = 'rgba(110, 209, 115, 0.8)'
+const bosquesStyle3 = new ol.style.Style({
+  fill: new ol.style.Fill({ 
+    color: bosquesColor3, 
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: bosquesColor3,
+    width: 4 
+  })
+});
+
+const bosquesColor4 = 'rgba(231, 188, 131, 0.8)'
+const bosquesStyle4 = new ol.style.Style({
+  fill: new ol.style.Fill({ 
+    color: bosquesColor4, 
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: bosquesColor4,
+    width: 4 
+  })
+});
+
+const bosquesColor5 = 'rgba(199, 140, 51, 0.8)'
+const bosquesStyle5 = new ol.style.Style({
+  fill: new ol.style.Fill({ 
+    color: bosquesColor5, 
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: bosquesColor5, 
+    width: 4 
+  })
+});
+
+
+
+
+
+
+/*
+const bosques = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/bosques.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Bosques</b>',
+  visible: false,
+  style: function(feature) { 
+    const zona = feature.get('zona');
+    const zonaString = zona ? String(zona).toLowerCase() : '';
+
+    // 3. Evaluate if the word 'bosque' is contained inside the text string
+    if (zonaString.includes('protección')) {
+      return bosquesStyle1;
+    }
+    else if (zonaString.includes('reforestación')) {
+      return bosquesStyle2;
+    }
+    else if (zonaString.includes('bosque')) {
+      return bosquesStyle3;
+    }
+    else if (zonaString.includes('desarrollo')) {
+      return bosquesStyle4;
+    }
+    else if (zonaString.includes('infraestructura')) {
+      return bosquesStyle5;
+    }
+
+  }
+});
+*/
+
+
+const bosques_polig = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/bosques_polig.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: bosquesStyle
+});
+
+const bosques1 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/bosques.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Protección permanente',
+  visible: false,
+  style: function(feature) { 
+    const zona = feature.get('zona');
+    const zonaString = zona ? String(zona).toLowerCase() : '';
+
+    // 3. Evaluate if the word 'bosque' is contained inside the text string
+    if (zonaString.includes('protección')) {
+      return bosquesStyle1;
+    }
+  }
+});
+
+const bosques2 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/bosques.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Reforestación con fines de conservación',
+  visible: false,
+  style: function(feature) { 
+    const zona = feature.get('zona');
+    const zonaString = zona ? String(zona).toLowerCase() : '';
+
+    // 3. Evaluate if the word 'bosque' is contained inside the text string
+    if (zonaString.includes('reforestación')) {
+      return bosquesStyle2;
+    }
+  }
+});
+
+const bosques3 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/bosques.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Bosque natural',
+  visible: false,
+  style: function(feature) { 
+    const zona = feature.get('zona');
+    const zonaString = zona ? String(zona).toLowerCase() : '';
+
+    // 3. Evaluate if the word 'bosque' is contained inside the text string
+    if (zonaString.includes('bosque')) {
+      return bosquesStyle3;
+    }
+  }
+});
+
+const bosques4 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/bosques.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Desarrollo turístico y de sostenibilidad',
+  visible: false,
+  style: function(feature) { 
+    const zona = feature.get('zona');
+    const zonaString = zona ? String(zona).toLowerCase() : '';
+
+    // 3. Evaluate if the word 'bosque' is contained inside the text string
+    if (zonaString.includes('desarrollo')) {
+      return bosquesStyle4;
+    }
+  }
+});
+
+const bosques5 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/bosques.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Infraestructura para vivienda, \ncaminos y otras construcciones',
+  visible: false,
+  style: function(feature) { 
+    const zona = feature.get('zona');
+    const zonaString = zona ? String(zona).toLowerCase() : '';
+
+    // 3. Evaluate if the word 'bosque' is contained inside the text string
+    if (zonaString.includes('infraestructura')) {
+      return bosquesStyle5;
+    }
+  }
+});
+
+
+
+
+const bosques = new ol.layer.Group({
+  title: 'Bosques',
+  layers: [bosques5, bosques4, bosques3, bosques2, bosques1, bosques_polig],
+  fold: 'close',
+});
+
+
+
+
+
+
+
+// SENDEROS
+const senderosColor1 = 'rgba(10, 74, 134, 1)'
+const senderosStyle1 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: senderosColor1, 
+    width: 4 
+  })
+});
+
+const senderosColor2 = 'rgba(67, 218, 75, 1)'
+const senderosStyle2 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: senderosColor2, 
+    width: 4 
+  })
+});
+
+const senderosColor3 = 'rgba(252, 96, 218, 1)'
+const senderosStyle3 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: senderosColor3,
+    width: 4 
+  })
+});
+
+const senderosColor4 = 'rgba(196, 23, 17, 1)'
+const senderosStyle4 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: senderosColor4,
+    width: 4 
+  })
+});
+
+const senderosColor5 = 'rgba(235, 161, 51, 1)'
+const senderosStyle5 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: senderosColor5, 
+    width: 4 
+  })
+});
+
+const senderosColor6 = 'rgba(98, 30, 143, 1)'
+const senderosStyle6 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: senderosColor6, 
+    width: 4 
+  })
+});
+
+const senderosColor7 = 'rgba(225, 228, 57, 1)'
+
+const senderosStyle7 = [new ol.style.Style({
+    stroke: new ol.style.Stroke({ 
+      color: senderosColor7, 
+      width: 10 
+    })
+  }),
+  new ol.style.Style({
+    stroke: new ol.style.Stroke({ 
+      color: senderosColor2, 
+      width: 4 
+    })
+  }),
+];
+
+
+  const senderosStyle8 = [new ol.style.Style({
+    stroke: new ol.style.Stroke({ 
+      color: senderosColor7, 
+      width: 10 
+    })
+  }),
+  new ol.style.Style({
+    stroke: new ol.style.Stroke({ 
+      color: senderosColor3, 
+      width: 4 
+    })
+  })];
+
+
+  const senderosStyle9 = [new ol.style.Style({
+    stroke: new ol.style.Stroke({ 
+      color: senderosColor7, 
+      width: 10
+    })
+  }),
+  new ol.style.Style({
+    stroke: new ol.style.Stroke({ 
+      color: senderosColor6, 
+      width: 4 
+    })
+  })];
+
+
+
+const senderos_lin = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/senderos.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: senderosStyle1
+});
+
+
+/*
+const senderos = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/senderos.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Senderos</b>',
+  visible: false,
+  style: function(feature) { 
+    const vehicular = feature.get('vehicular');
+    const vehicularString = vehicular ? String(vehicular).toLowerCase() : '';
+    if (vehicularString.includes('turistico')) {
+      return senderosStyle7;
+    }
+    else if (vehicularString.includes('científico')) {
+      return senderosStyle8;
+    }
+    else if (vehicularString.includes('serv')) {
+      return senderosStyle9;
+    }
+
+
+
+    const sendero = feature.get('senderos');
+    const senderoString = sendero ? String(sendero).toLowerCase() : '';
+
+    // 3. Evaluate if the word 'bosque' is contained inside the text string
+    if (senderoString.includes('deportivo')) {
+      return senderosStyle1;
+    }
+    else if (senderoString.includes('turistico')) {
+      return senderosStyle2;
+    }
+    else if (senderoString.includes('científico')) {
+      return senderosStyle3;
+    }
+    else if (senderoString.includes('sendero espol')) {
+      return senderosStyle4;
+    }
+    else if (senderoString.includes('sendero bvpp')) {
+      return senderosStyle5;
+    }
+    else if (senderoString.includes('servidumbre poliducto')) {
+      return senderosStyle6;
+    }
+
+
+    
+
+  }
+});
+
+*/
+
+
+const senderos1 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/senderos.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Deportivo',
+  visible: false,
+  style: function(feature) { 
+    const sendero = feature.get('senderos');
+    const senderoString = sendero ? String(sendero).toLowerCase() : '';
+
+    if (senderoString.includes('deportivo')) {
+      return senderosStyle1;
+    }
+  }
+});
+
+const senderos2 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/senderos.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Turístico',
+  visible: false,
+  style: function(feature) { 
+    const sendero = feature.get('senderos');
+    const senderoString = sendero ? String(sendero).toLowerCase() : '';
+
+    if (senderoString.includes('turistico')) {
+      return senderosStyle2;
+    }
+  }
+});
+
+const senderos3 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/senderos.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Científico / Académico',
+  visible: false,
+  style: function(feature) { 
+    const sendero = feature.get('senderos');
+    const senderoString = sendero ? String(sendero).toLowerCase() : '';
+
+    if (senderoString.includes('científico')) {
+      return senderosStyle3;
+    }
+  }
+});
+
+const senderos4 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/senderos.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Sendero Espol',
+  visible: false,
+  style: function(feature) { 
+    const sendero = feature.get('senderos');
+    const senderoString = sendero ? String(sendero).toLowerCase() : '';
+
+    if (senderoString.includes('sendero espol')) {
+      return senderosStyle4;
+    }
+  }
+});
+
+const senderos5 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/senderos.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Sendero BVPP',
+  visible: false,
+  style: function(feature) { 
+    const sendero = feature.get('senderos');
+    const senderoString = sendero ? String(sendero).toLowerCase() : '';
+
+    if (senderoString.includes('sendero bvpp')) {
+      return senderosStyle5;
+    }
+  }
+});
+
+const senderos6 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/senderos.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Servidumbre poliducto',
+  visible: false,
+  style: function(feature) { 
+    const sendero = feature.get('senderos');
+    const senderoString = sendero ? String(sendero).toLowerCase() : '';
+
+    if (senderoString.includes('servidumbre poliducto')) {
+      return senderosStyle6;
+    }
+  }
+});
+
+const senderos7 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/senderos.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: function(feature) { 
+    const vehicular = feature.get('vehicular');
+    const vehicularString = vehicular ? String(vehicular).toLowerCase() : '';
+    if (vehicularString.includes('turistico')) {
+      return senderosStyle7;
+    }
+  }
+});
+
+const senderos8 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/senderos.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: function(feature) { 
+    const vehicular = feature.get('vehicular');
+    const vehicularString = vehicular ? String(vehicular).toLowerCase() : '';
+    if (vehicularString.includes('científico')) {
+      return senderosStyle8;
+    }
+  }
+});
+
+const senderos9 = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/senderos.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: function(feature) { 
+    const vehicular = feature.get('vehicular');
+    const vehicularString = vehicular ? String(vehicular).toLowerCase() : '';
+    if (vehicularString.includes('serv')) {
+      return senderosStyle9;
+    }
+  }
+});
+
+
+
+const senderos = new ol.layer.Group({
+  title: 'Senderos',
+  layers: [senderos9, senderos8, senderos7, senderos6, senderos5, senderos4, senderos3, senderos2, senderos1, senderos_lin],
+  fold: 'close',
+});
+
+
+senderos2.on('change:visible', () => {
+  const isVisible = senderos2.getVisible();
+  senderos7.setVisible(isVisible);
+});
+
+senderos3.on('change:visible', () => {
+  const isVisible = senderos3.getVisible();
+  senderos8.setVisible(isVisible);
+});
+
+senderos6.on('change:visible', () => {
+  const isVisible = senderos6.getVisible();
+  senderos9.setVisible(isVisible);
+});
+
+
+
+// PLANTAS DE TRATAMIENTO
+const pt = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/polig_espol.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Plantas de tratamiento</b>',
+  visible: false,
+  style: function(feature) {
+    const attributeValue = feature.get('referencia_inmueble'); 
+    const zona = feature.get('zona');
+    if (attributeValue && attributeValue.toLowerCase().includes('planta de tratamiento')) {  // debe estar en minúsculas
+      
+      if (zona == 1) {
+        return poligonosStyle1; 
+      }
+      else if (zona == 2) {
+        return poligonosStyle2; 
+      }
+      else if (zona == 3) {
+        return poligonosStyle3; 
+      }
+      else if (zona == 4) {
+        return poligonosStyle4; 
+      }
+      else if (zona == 5) {
+        return poligonosStyle5; 
+      }
+      else if (zona == 6) {
+        return poligonosStyle6; 
+      }
+      else if (zona == 7) {
+        return poligonosStyle7; 
+      }
+      else if (zona == 8) {
+        return poligonosStyle8; 
+      }
+      else if (zona == 9) {
+        return poligonosStyle9; 
+      }
+      else if (zona == 10) {
+        return poligonosStyle10; 
+      }
+      else if (zona == 11) {
+        return poligonosStyle11; 
+      }
+      else if (zona == 12) {
+        return poligonosStyle12; 
+      }
+      else if (zona == 13) {
+        return poligonosStyle13; 
+      }
+      else if (zona == 14) {
+        return poligonosStyle14; 
+      }
+
+    } else {
+      return null; 
+    }
+  }
+});
+
+
+
+const puntos_pt = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/puntos_espol.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('name'); 
+    if (attributeValue && attributeValue.toLowerCase().includes('pt')) {  // debe estar en minúsculas
+
+      if (resolution < 0.8) {
+        // Muestra etiquetas al hacer zoom
+        const codigo = feature.get('name') || '';
+        const codigoAnterior = feature.get('cod_anterior') || '';
+        let labelText = codigo; 
+        
+        if (codigoAnterior) {
+          labelText += `\nAntes:  ${codigoAnterior}`;
+        }
+        puntosStyle.getText().setText(labelText);
+      } else {
+        // Quita etiquetas al hacer zoom out
+        puntosStyle.getText().setText('');
+      }
+
+      return puntosStyle;
+    } else {
+      return null; 
+    }
+  }
+});
+
+
+pt.on('change:visible', () => {
+  const isVisible = pt.getVisible();
+  puntos_pt.setVisible(isVisible);
+});
+
+
+
+
+
+
+
+// REDES AASS
+const aassStyle1 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: '#102d8b', 
+    width: 4 
+  })
+});
+
+const aassStyle2 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(199, 9, 9)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: 'rgb(199, 9, 9)', 
+    width: 2 
+  })
+});
+
+
+
+
+// Incluye código para convertir los círculos (cámaras) de líneas a polígonos
+const aass = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/aass.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Redes AA.SS.</b>',
+  visible: false,
+  style: aassStyle1
+  
+  /* function(feature) {
+    const attributeValue = feature.get('Layer');
+    const geom = feature.getGeometry();
+  
+    // 1. ISOLATE THE CIRCLE: Check if the feature geometry is a MultiLineString
+    
+    if (geom.getType() === 'MultiLineString') {
+      const allLines = geom.getCoordinates();
+      const firstLine = allLines[0]; // Extract the inner coordinate path loop
+      
+      if (firstLine && firstLine.length > 1) {
+        const firstPoint = firstLine[0];
+        const lastPoint = firstLine[firstLine.length - 1];
+        
+        // Match the microscopic floating-point gap from your data sample
+        const diffX = Math.abs(firstPoint[0] - lastPoint[0]);
+        const diffY = Math.abs(firstPoint[1] - lastPoint[1]);
+        const isClosedLoop = diffX < 0.001 && diffY < 0.001;
+        
+        if (isClosedLoop) {
+          // 2. THE DYNAMIC FIX: Use a geometryFunction inside a dedicated Style object
+          // This overrides how OpenLayers *draws* the feature without mutating the source data
+          return new ol.style.Style({
+            zIndex: 100,  // Hace que el círculo este por encima de las líneas
+            geometry: function(f) {
+              const originalGeom = f.getGeometry();
+              const coords = originalGeom.getCoordinates();
+              // Wrap the line coordinates inside a MultiPolygon layout array structure
+              return new ol.geom.MultiPolygon([coords]);
+            },
+            fill: new ol.style.Fill({
+              color: 'rgb(255, 38, 23)' // Yellow interior fill with 50% opacity
+            }),
+            stroke: new ol.style.Stroke({
+              color: 'rgb(255, 38, 23)', // Yellow outline border
+              width: 4
+            })
+          });
+        }
+      }
+    } */
+
+});
+
+const aass_camaras = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/aass_camaras.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: aassStyle2
+});
+
+
+aass.on('change:visible', () => {
+  const isVisible = aass.getVisible();
+  aass_camaras.setVisible(isVisible);
+});
+
+
+
+// REDES AALL
+const aallStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: '#102d8b', 
+    width: 4 
+  })
+});
+
+
+// Incluye código para convertir los círculos (cámaras) de líneas a polígonos
+const aall = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/aall.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Redes AA.LL.</b>',
+  visible: false,
+  style: aallStyle
+});
+
+
+
+
+
+
+
 const map = new ol.Map(
     {   
         target: "map",
         layers: [
             basemap,
             lindero,
+            //aall,
+            //aass,
+            //aass_camaras,
+            pt,
+            puntos_pt,
+            senderos,
+            bosques,
+            //ciclovia_proyectada,
+            ciclovia_existente,
+            parqueos,
             viasespol,
-            polig_arriendo,
-            puntos_arriendo,
-            polig_comodato,
-            puntos_comodato,
+            arriendos,
+            puntos_arriendos,
+            comodatos,
+            puntos_comodatos,
             zonas,
             zonas_puntos,
             poligonos, // edificaciones
-            puntos
+            puntos,
         ], 
         view: new ol.View({
             center: new ol.proj.fromLonLat([-79.964506 , -2.148383]),
@@ -1553,11 +2579,11 @@ map.on('singleclick', function (evt) {
 
   // --- CASO 3: CUALQUIER OTRA CAPA (Automatizada para que nunca falle) ---
   else {
-    for (var key in props) {
+    /*for (var key in props) {
       if (key !== 'geometry' && key !== 'boundedBy' && props.hasOwnProperty(key)) {
         htmlContent += '<tr><td><strong>' + key + '</strong></td><td>' + (props[key] || 'N/A') + '</td></tr>';
       }
-    }
+    }*/
   }
 
   htmlContent += '</table>';
@@ -1570,13 +2596,13 @@ map.on('singleclick', function (evt) {
 
 
 
-/*
+
 // TABLA PARA COMODATOS
 const popupElement = document.createElement('div');
 popupElement.id = 'comodato-map-control';
 popupElement.className = 'ol-unselectable ol-control'; 
 popupElement.style.position = 'absolute';
-popupElement.style.bottom = '80px';       
+popupElement.style.bottom = '20px';       
 popupElement.style.left = '20px';         
 popupElement.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
 popupElement.style.border = '1px solid #ccc';
@@ -1592,7 +2618,7 @@ map.addControl(comodatoTableControl);
 
 // 2. SEPARATED FUNCTION: This builds and displays the table safely
 function updateComodatoTable() {
-  const source = polig_comodato.getSource();
+  const source = comodatos.getSource();
   const features = source.getFeatures(); 
   
   if (features.length === 0) {
@@ -1607,19 +2633,21 @@ function updateComodatoTable() {
     const props = feature.getProperties(); 
     
     // 1. EXTRAE EL PROPIETARIO PARA VALIDACIÓN (Maneja nulos de forma segura)
-    const propietario = props.propietario ? String(props.propietario).toLowerCase() : '';
+    const ref = props.ref ? String(props.ref).toLowerCase() : '';
 
     // 2. FILTRO CRUCIAL: Solo procesa el polígono si el campo contiene la palabra 'comodato'
-    if (propietario.includes('comodato')) {
+    if (ref.includes('')) {
       
-      const codigoActual = props.código_actual || 'N/A';
-      const codigoAnterior = props.código_anterior || 'N/A';
+      const refActual = props.ref || 'N/A';
+      const codigoActual = props.cod_act || 'N/A';
+      const codigoAnterior = props.cod_ant || 'N/A';
       const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
       
       tableRowsHTML += `
         <tr>
-          <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${codigoActual}</td>
-          <td style="padding: 6px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
+          <td style="padding: 6px; border: 1px solid #ddd;">${refActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd;">${codigoActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd;">${codigoAnterior}</td>
           <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
         </tr>
       `;
@@ -1630,14 +2658,15 @@ function updateComodatoTable() {
   if (tableRowsHTML === '') {
     tableRowsHTML = `<tr><td colspan="3" style="padding: 10px; text-align: center; color: #888;">No se encontraron comodatos activos</td></tr>`;
   }
-
+  // USAR max-height PARA CAMBIAR ALTURA DE LA TABLA
   popupElement.innerHTML = `
     <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
       Comodatos
     </h4>
-    <div style="max-height: 300px; overflow-y: auto;">
+    <div style="max-height: 150px; overflow-y: auto;">
       <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 14px;">
         <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
+          <th style="padding: 6px; border: 1px solid #ddd;">Referencia</th>
           <th style="padding: 6px; border: 1px solid #ddd;">Cód. Actual</th>
           <th style="padding: 6px; border: 1px solid #ddd;">Cód. Ant.</th>
           <th style="padding: 6px; border: 1px solid #ddd; text-align: center;">Zona</th>
@@ -1651,8 +2680,8 @@ function updateComodatoTable() {
 }
 
 // 3. LISTEN TO INITIAL VISIBILITY TOGGLE
-polig_comodato.on('change:visible', () => {
-  if (polig_comodato.getVisible()) {
+comodatos.on('change:visible', () => {
+  if (comodatos.getVisible()) {
     updateComodatoTable(); // Attempts to run immediately
   } else {
     popupElement.style.display = 'none'; // Hides instantly when unchecked
@@ -1660,9 +2689,9 @@ polig_comodato.on('change:visible', () => {
 });
 
 // 4. THE CRUCIAL FIX: If data arrives AFTER the user clicks, update the table instantly
-polig_comodato.getSource().on('featuresloadend', () => {
+comodatos.getSource().on('featuresloadend', () => {
   // Only update the table if the user currently wants to see the layer
-  if (polig_comodato.getVisible()) {
+  if (comodatos.getVisible()) {
     updateComodatoTable();
   }
 });
@@ -1674,7 +2703,7 @@ const popupElement_arriendo = document.createElement('div');
 popupElement_arriendo.id = 'arriendo-map-control';
 popupElement_arriendo.className = 'ol-unselectable ol-control'; 
 popupElement_arriendo.style.position = 'absolute';
-popupElement_arriendo.style.bottom = '80px';       
+popupElement_arriendo.style.bottom = '20px';       
 popupElement_arriendo.style.left = '20px';         
 popupElement_arriendo.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
 popupElement_arriendo.style.border = '1px solid #ccc';
@@ -1690,7 +2719,7 @@ map.addControl(arriendoTableControl);
 
 // 2. SEPARATED FUNCTION: This builds and displays the table safely
 function updateArriendoTable() {
-  const source = polig_arriendo.getSource();
+  const source = arriendos.getSource();
   const features = source.getFeatures(); 
   
   if (features.length === 0) {
@@ -1705,19 +2734,21 @@ function updateArriendoTable() {
     const props = feature.getProperties(); 
     
     // 1. EXTRAE EL PROPIETARIO PARA VALIDACIÓN (Maneja nulos de forma segura)
-    const propietario = props.propietario ? String(props.propietario).toLowerCase() : '';
+    const ref = props.ref ? String(props.ref).toLowerCase() : '';
 
     // 2. FILTRO CRUCIAL: Solo procesa el polígono si el campo contiene la palabra 'arriendo'
-    if (propietario.includes('arriendo')) {
+    if (ref.includes('')) {
       
-      const codigoActual = props.código_actual || 'N/A';
-      const codigoAnterior = props.código_anterior || 'N/A';
+      const refActual = props.ref || 'N/A';
+      const codigoActual = props.cod_act || 'N/A';
+      const codigoAnterior = props.cod_ant || 'N/A';
       const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
       
       tableRowsHTML += `
         <tr>
-          <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${codigoActual}</td>
-          <td style="padding: 6px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
+          <td style="padding: 6px; border: 1px solid #ddd;">${refActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd;">${codigoActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd;">${codigoAnterior}</td>
           <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
         </tr>
       `;
@@ -1726,16 +2757,17 @@ function updateArriendoTable() {
 
   // 3. MENSAJE DE FALLBACK: Si ningún polígono coincide con el criterio
   if (tableRowsHTML === '') {
-    tableRowsHTML = `<tr><td colspan="3" style="padding: 10px; text-align: center; color: #888;">No se encontraron comodatos activos</td></tr>`;
+    tableRowsHTML = `<tr><td colspan="3" style="padding: 10px; text-align: center; color: #888;">No se encontraron arriendos activos</td></tr>`;
   }
-
+  // USAR max-height PARA CAMBIAR ALTURA DE LA TABLA
   popupElement_arriendo.innerHTML = `
     <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
       Arriendos
     </h4>
-    <div style="max-height: 300px; overflow-y: auto;">
+    <div style="max-height: 150px; overflow-y: auto;"> 
       <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 14px;">
         <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
+          <th style="padding: 6px; border: 1px solid #ddd;">Referencia</th>
           <th style="padding: 6px; border: 1px solid #ddd;">Cód. Actual</th>
           <th style="padding: 6px; border: 1px solid #ddd;">Cód. Ant.</th>
           <th style="padding: 6px; border: 1px solid #ddd; text-align: center;">Zona</th>
@@ -1749,8 +2781,8 @@ function updateArriendoTable() {
 }
 
 // 3. LISTEN TO INITIAL VISIBILITY TOGGLE
-polig_arriendo.on('change:visible', () => {
-  if (polig_arriendo.getVisible()) {
+arriendos.on('change:visible', () => {
+  if (arriendos.getVisible()) {
     updateArriendoTable(); // Attempts to run immediately
   } else {
     popupElement_arriendo.style.display = 'none'; // Hides instantly when unchecked
@@ -1758,14 +2790,318 @@ polig_arriendo.on('change:visible', () => {
 });
 
 // 4. THE CRUCIAL FIX: If data arrives AFTER the user clicks, update the table instantly
-polig_arriendo.getSource().on('featuresloadend', () => {
+arriendos.getSource().on('featuresloadend', () => {
   // Only update the table if the user currently wants to see the layer
-  if (polig_arriendo.getVisible()) {
+  if (arriendos.getVisible()) {
     updateArriendoTable();
   }
 });
 
+
+
+
+
+
+
+/*
+// TABLA DE SIMBOLOGIA BOSQUES
+document.addEventListener('DOMContentLoaded', function() {
+  // 1. Verify that your layer variable 'poligonos' exists [Query-relevant Context]
+  if (typeof bosques === 'undefined') {
+    console.error("Error: The map layer variable 'poligonos' is not defined yet.");
+    return;
+  }
+
+  // 2. Create the Legend DOM Element completely inside JavaScript [Query-relevant Context]
+  const legendElement = document.createElement('div');
+  legendElement.id = 'legend-container';
+  
+  // Apply all window positions and box styling
+  legendElement.style.position = 'absolute';
+  legendElement.style.bottom = '20px';
+  legendElement.style.left = '20px';
+  legendElement.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+  legendElement.style.padding = '15px 20px';
+  legendElement.style.borderRadius = '6px';
+  legendElement.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+  legendElement.style.zIndex = '1000';
+  legendElement.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+  legendElement.style.minWidth = '180px';
+  legendElement.style.border = '1px solid #e0e0e0';
+  legendElement.style.display = 'none'; // Hidden by default [Query-relevant Context]
+
+  // 3. Inject the Symbology Layout Content (Edit your text descriptions and colors here) [Query-relevant Context]
+  //<span style="color: #888; margin: 0 4px;">— </span>    
+  legendElement.innerHTML = `
+    <h4 style="margin: 0 0 10px 0; font-weight: 700; font-size: 13px; color: #444; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #eaeaea; padding-bottom: 6px;">
+      BOSQUES
+    </h4>
+    <table style="border-collapse: collapse; width: 100%;">
+      <tbody>
+        <tr style="height: 28px;">
+          <td style="vertical-align: middle; font-size: 12px; color: #333; padding: 4px 0;">
+            <span style="display: inline-block; color: ${bosquesColor1}; font-weight: bold; transform: scale(5, 2); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">PROTECCIÓN PERMANENTE</span> 
+          </td>
+        </tr>
+        <tr style="height: 28px;">
+          <td style="vertical-align: middle; font-size: 12px; color: #333; padding: 4px 0;">
+            <span style="display: inline-block; color: ${bosquesColor2}; font-weight: bold; transform: scale(5, 2); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">REFORESTACIÓN CON FINES DE CONSERVACIÓN</span> 
+          </td>
+        </tr>
+        <tr style="height: 28px;">
+        <td style="vertical-align: middle; font-size: 12px; color: #333; padding: 4px 0;">
+            <span style="display: inline-block; color: ${bosquesColor3}; font-weight: bold; transform: scale(5, 2); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">BOSQUE NATURAL</span>
+          </td>
+        </tr>
+        <tr style="height: 28px;">
+        <td style="vertical-align: middle; font-size: 12px; color: #333; padding: 4px 0;"> 
+            <span style="display: inline-block; color: ${bosquesColor4}; font-weight: bold; transform: scale(5, 2); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">DESARROLLO TURISTICO Y DE SOSTENIBILIDAD</span>
+          </td>
+        </tr>
+        <tr style="height: 28px;">
+        <td style="vertical-align: middle; font-size: 12px; color: #333; padding: 4px 0;"> 
+            <span style="display: inline-block; color: ${bosquesColor5}; font-weight: bold; transform: scale(5, 2); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">INFRAESTRUCTURA PARA VIVIENDA, CAMINOS Y OTRAS CONSTRUCCIONES</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+
+  // 4. Append the newly created template directly onto the webpage layout body
+  document.body.appendChild(legendElement);
+
+  // 5. Toggle display parameter based directly on layer switcher click events [Query-relevant Context]
+  bosques.on('change:visible', function() {
+    if (bosques.getVisible()) {
+      legendElement.style.display = 'block'; // Show on check click [Query-relevant Context]
+    } else {
+      legendElement.style.display = 'none';  // Hide on uncheck click [Query-relevant Context]
+    }
+  });
+
+  // Run a manual checkpoint setup validation at script load execution
+  if (bosques.getVisible()) {
+    legendElement.style.display = 'block';
+  } else {
+    legendElement.style.display = 'none';
+  }
+});
 */
+
+
+
+/*
+// TABLA DE SIMBOLOGIA SENDEROS 
+document.addEventListener('DOMContentLoaded', function() {
+  // 1. Verify that your layer variable 'poligonos' exists [Query-relevant Context]
+  if (typeof senderos === 'undefined') {
+    console.error("Error: The map layer variable 'poligonos' is not defined yet.");
+    return;
+  }
+
+  // 2. Create the Legend DOM Element completely inside JavaScript [Query-relevant Context]
+  const legendElement_senderos = document.createElement('div');
+  legendElement_senderos.id = 'legend-container';
+  
+  // Apply all window positions and box styling
+  legendElement_senderos.style.position = 'absolute';
+  legendElement_senderos.style.bottom = '20px';
+  legendElement_senderos.style.left = '20px';
+  legendElement_senderos.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+  legendElement_senderos.style.padding = '15px 20px';
+  legendElement_senderos.style.borderRadius = '6px';
+  legendElement_senderos.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+  legendElement_senderos.style.zIndex = '1000';
+  legendElement_senderos.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+  legendElement_senderos.style.minWidth = '180px';
+  legendElement_senderos.style.border = '1px solid #e0e0e0';
+  legendElement_senderos.style.display = 'none'; // Hidden by default [Query-relevant Context]
+  //legendElement_senderos.style.height = '200px'; 
+
+  // 3. Inject the Symbology Layout Content (Edit your text descriptions and colors here) [Query-relevant Context]
+  //<span style="color: #888; margin: 0 4px;">— </span>    
+  legendElement_senderos.innerHTML = `
+    <h4 style="margin: 0 0 10px 0; font-weight: 700; font-size: 13px; color: #444; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #eaeaea; padding-bottom: 6px;">
+      SENDEROS
+    </h4>
+    <table style="border-collapse: collapse; width: 100%;">
+      <tbody>
+        <tr style="height: 28px;">
+          <td style="vertical-align: middle; font-size: 14px; color: #333; padding: 4px 0;">
+            <span style="display: inline-block; color: ${senderosColor1}; font-weight: bold; transform: scale(5, 2); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">DEPORTIVO</span> 
+          </td>
+        </tr>
+        <tr style="height: 28px;">
+          <td style="vertical-align: middle; font-size: 14px; color: #333; padding: 4px 0;">
+            <span style="display: inline-block; color: ${senderosColor2}; font-weight: bold; transform: scale(5, 2); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">TURISTICO</span> 
+          </td>
+        </tr>
+        <tr style="height: 28px;">
+        <td style="vertical-align: middle; font-size: 14px; color: #333; padding: 4px 0;">
+            <span style="display: inline-block; color: ${senderosColor3}; font-weight: bold; transform: scale(5, 2); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">CIENTÍFICO / ACADÉMICO</span>
+          </td>
+        </tr>
+        <tr style="height: 28px;">
+        <td style="vertical-align: middle; font-size: 14px; color: #333; padding: 4px 0;"> 
+            <span style="display: inline-block; color: ${senderosColor4}; font-weight: bold; transform: scale(5, 2); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">SENDERO ESPOL</span>
+          </td>
+        </tr>
+        <tr style="height: 28px;">
+        <td style="vertical-align: middle; font-size: 14px; color: #333; padding: 4px 0;"> 
+            <span style="display: inline-block; color: ${senderosColor5}; font-weight: bold; transform: scale(5, 2); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">SENDERO BVPP</span>
+          </td>
+        </tr>
+        <td style="vertical-align: middle; font-size: 14px; color: #333; padding: 4px 0;"> 
+            <span style="display: inline-block; color: ${senderosColor6}; font-weight: bold; transform: scaleX(5); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">SERVIDUMBRE POLIDUCTO</span>
+          </td>
+        </tr>
+        <td style="vertical-align: middle; font-size: 14px; color: #333; padding: 4px 0;"> 
+            <span style="display: inline-block; color: ${senderosColor7}; font-weight: bold; transform: scale(5, 2); margin: 0 15px; vertical-align: 3px">-</span>
+            <span style="font-weight: 500; color: #222;">ACCESO RÚSTICO VEHICULAR</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+
+  // 4. Append the newly created template directly onto the webpage layout body
+  document.body.appendChild(legendElement_senderos);
+
+  // 5. Toggle display parameter based directly on layer switcher click events [Query-relevant Context]
+  senderos.on('change:visible', function() {
+    if (senderos.getVisible()) {
+      legendElement_senderos.style.display = 'block'; // Show on check click [Query-relevant Context]
+    } else {
+      legendElement_senderos.style.display = 'none';  // Hide on uncheck click [Query-relevant Context]
+    }
+  });
+
+  // Run a manual checkpoint setup validation at script load execution
+  if (senderos.getVisible()) {
+    legendElement_senderos.style.display = 'block';
+  } else {
+    legendElement_senderos.style.display = 'none';
+  }
+});
+*/
+
+
+
+
+
+// TABLA PARA PLANTA DE TRATAMIENTOS
+const popupElement_pt = document.createElement('div');
+popupElement_pt.id = 'arriendo-map-control';
+popupElement_pt.className = 'ol-unselectable ol-control'; 
+popupElement_pt.style.position = 'absolute';
+popupElement_pt.style.bottom = '20px';       
+popupElement_pt.style.left = '20px';         
+popupElement_pt.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+popupElement_pt.style.border = '1px solid #ccc';
+popupElement_pt.style.borderRadius = '4px';
+popupElement_pt.style.padding = '12px';
+popupElement_pt.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
+popupElement_pt.style.maxWidth = '350px';
+popupElement_pt.style.zIndex = '1000';
+popupElement_pt.style.display = 'none';      
+
+const ptTableControl = new ol.control.Control({ element: popupElement_pt });
+map.addControl(ptTableControl);
+
+// 2. SEPARATED FUNCTION: This builds and displays the table safely
+function updateptTable() {
+  const source = pt.getSource();
+  const features = source.getFeatures(); 
+  
+  if (features.length === 0) {
+    popupElement_pt.innerHTML = `<div style="font-size:12px; color:#666; padding:10px;">Cargando datos...</div>`;
+    popupElement_pt.style.display = 'block';
+    return;
+  }
+
+  let tableRowsHTML = '';
+  
+  features.forEach((feature) => {
+    const props = feature.getProperties(); 
+    
+    // 1. EXTRAE EL PROPIETARIO PARA VALIDACIÓN (Maneja nulos de forma segura)
+    const planta = props.referencia_inmueble ? String(props.referencia_inmueble).toLowerCase() : '';
+
+    // 2. FILTRO CRUCIAL: Solo procesa el polígono si el campo contiene la palabra 'arriendo'
+    if (planta.includes('planta de tratamiento')) {
+      
+      const refActual = props.referencia_inmueble || 'N/A';
+      const codigoActual = props.código_actual || 'N/A';
+      const codigoAnterior = props.código_anterior || 'N/A';
+      const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
+      
+      tableRowsHTML += `
+        <tr>
+          <td style="padding: 6px; border: 1px solid #ddd;">${refActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${codigoActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
+        </tr>
+      `;
+    }
+  });
+
+  // 3. MENSAJE DE FALLBACK: Si ningún polígono coincide con el criterio
+  if (tableRowsHTML === '') {
+    tableRowsHTML = `<tr><td colspan="3" style="padding: 10px; text-align: center; color: #888;">No se encontraron comodatos activos</td></tr>`;
+  }
+
+  popupElement_pt.innerHTML = `
+    <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
+      Plantas de tratamiento
+    </h4>
+    <div style="max-height: 150px; overflow-y: auto;">
+      <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 14px;">
+        <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
+          <th style="padding: 6px; border: 1px solid #ddd;">Referencia</th>
+          <th style="padding: 6px; border: 1px solid #ddd;">Cód. Actual</th>
+          <th style="padding: 6px; border: 1px solid #ddd;">Cód. Ant.</th>
+          <th style="padding: 6px; border: 1px solid #ddd; text-align: center;">Zona</th>
+        </tr>
+        ${tableRowsHTML}
+      </table>
+    </div>
+  `;
+  
+  popupElement_pt.style.display = 'block';
+}
+
+// 3. LISTEN TO INITIAL VISIBILITY TOGGLE
+pt.on('change:visible', () => {
+  if (pt.getVisible()) {
+    updateptTable(); // Attempts to run immediately
+  } else {
+    popupElement_pt.style.display = 'none'; // Hides instantly when unchecked
+  }
+});
+
+// 4. THE CRUCIAL FIX: If data arrives AFTER the user clicks, update the table instantly
+pt.getSource().on('featuresloadend', () => {
+  // Only update the table if the user currently wants to see the layer
+  if (pt.getVisible()) {
+    updateptTable();
+  }
+});
+
+
+
+
 
 
 
