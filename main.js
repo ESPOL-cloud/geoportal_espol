@@ -1417,9 +1417,18 @@ const parqueos = new ol.layer.Vector({
 
 
 // CICLOVIA
+// Ciclovia existente es elaboración propia en QGIS
+// Ciclovía proyectada es polilinea creada en Autocad según el dwg del proyecto
 const cicloviaStyle = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
+    width: 4 
+  })
+});
+
+const cicloviaStyle2 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: '#d69d20', 
     width: 4 
   })
 });
@@ -1433,17 +1442,29 @@ const ciclovia_existente = new ol.layer.Vector({
 
 
 const ciclovia_proyectada = new ol.layer.Vector({
-  source: new ol.source.Vector({ url: './capas/ciclovia_pry.geojson', format: new ol.format.GeoJSON() }),
+  source: new ol.source.Vector({ url: './capas/ciclovia_proy.geojson', format: new ol.format.GeoJSON() }),
   title: '<b>Ciclovía proyectada</b>',
   visible: false,
-  style: cicloviaStyle
+  style: cicloviaStyle2
 });
 
 
 
 
+/*
+const ciclovia_proyectada = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/ciclovia_pry.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Ciclovía proyectada</b>',
+  visible: false,
+  style: cicloviaStyle
+});
+*/
+
+
+
 
 // BOSQUES
+// Layer obtenido del dwg: ZONAS
 const bosquesColor = 'rgba(43, 141, 87, 1)'
 const bosquesStyle = new ol.style.Style({
   fill: new ol.style.Fill({ 
@@ -1455,7 +1476,7 @@ const bosquesStyle = new ol.style.Style({
   })
 });
 
-const bosquesColor1 = 'rgba(43, 141, 87, 0.8)'
+const bosquesColor1 = 'rgba(19, 116, 63, 0.8)'
 const bosquesStyle1 = new ol.style.Style({
   fill: new ol.style.Fill({ 
     color: bosquesColor1, 
@@ -1511,7 +1532,12 @@ const bosquesStyle5 = new ol.style.Style({
 });
 
 
-
+const bosquesContorno = new ol.style.Style({
+    stroke: new ol.style.Stroke({ 
+    color: bosquesColor, 
+    width: 4 
+  })
+});
 
 
 
@@ -1550,6 +1576,12 @@ const bosques_polig = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/bosques_polig.geojson', format: new ol.format.GeoJSON() }),
   visible: false,
   style: bosquesStyle
+});
+
+const bosques_contorno = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/bosques_polig.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: bosquesContorno
 });
 
 const bosques1 = new ol.layer.Vector({
@@ -1638,11 +1670,15 @@ const bosques = new ol.layer.Group({
 
 
 
-
+bosques.on('change:visible', () => {
+  const isVisible = bosques.getVisible();
+  bosques_contorno.setVisible(isVisible);
+});
 
 
 
 // SENDEROS
+// En dwg de senderos se crearon layers de cada tipo de senderos, obtenidos del layer AB011_SENDERO_BVPP_L
 const senderosColor1 = 'rgba(10, 74, 134, 1)'
 const senderosStyle1 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
@@ -2045,6 +2081,8 @@ pt.on('change:visible', () => {
 
 
 // REDES AASS
+// Layers usados para redes: MP_COLECTOR GENERAL, MP_PENDIENTE
+// Layers usados para camaras: MP_CAMARAS AASS
 const aassStyle1 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: '#102d8b', 
@@ -2131,6 +2169,7 @@ aass.on('change:visible', () => {
 
 
 // REDES AALL
+// Layers usados para redes: MP_CANALES GENERAL
 const aallStyle = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: '#102d8b', 
@@ -2139,7 +2178,6 @@ const aallStyle = new ol.style.Style({
 });
 
 
-// Incluye código para convertir los círculos (cámaras) de líneas a polígonos
 const aall = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/aall.geojson', format: new ol.format.GeoJSON() }),
   title: '<b>Redes AA.LL.</b>',
@@ -2149,6 +2187,134 @@ const aall = new ol.layer.Vector({
 
 
 
+// REDES AAPP
+const aappStyle1 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: '#102d8b', 
+    width: 4 
+  })
+});
+
+const aappStyle2 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(199, 9, 9)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: 'rgb(199, 9, 9)', 
+    width: 2 
+  })
+});
+
+
+const aapp = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/aapp.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Redes AA.PP.</b>',
+  visible: false,
+  style: aappStyle1
+  
+
+});
+
+const aapp_camaras = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/aapp_camaras.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: aappStyle2
+});
+
+
+aapp.on('change:visible', () => {
+  const isVisible = aapp.getVisible();
+  aapp_camaras.setVisible(isVisible);
+});
+
+
+
+
+// VALVULAS Y CAMARAS
+// En autocad de valvulas hay 35 valvulas y 10 valvulas_aire
+// En autocad de camaras hay 58 camaras. Crear layer CAMARAS e incluir polylines con area 9.164, 14.318, 20.619 del layer PROYECTO_CAMARA_AAPP
+//#102d8b
+const valvulasStyle1 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: 'rgb(248, 235, 48)', 
+    width: 4 
+  })
+});
+
+const valvulasStyle2 = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(248, 235, 48)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: 'rgb(248, 235, 48)', 
+    width: 2 
+  })
+});
+
+const valvulasStyle3 = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: 'rgb(16, 61, 119)', 
+    width: 4 
+  })
+});
+
+const camarasStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(238, 228, 92)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: 'rgb(156, 147, 19)', 
+    width: 4 
+  })
+});
+
+
+// El archivo dwg de valvulas incluye las redes aa.pp. con las coordenadas correctas
+const valvulas = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/valvulas.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: valvulasStyle1
+  
+
+});
+
+const valvulas_aire = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/valvulas_aire.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: valvulasStyle2
+});
+
+const valvulas_aapp = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/valvulas_aapp.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Redes AA.PP.</b>',
+  visible: false,
+  style: valvulasStyle3
+});
+
+
+
+valvulas_aapp.on('change:visible', () => {
+  const isVisible = valvulas_aapp.getVisible();
+  valvulas.setVisible(isVisible);
+});
+
+valvulas_aapp.on('change:visible', () => {
+  const isVisible = valvulas_aapp.getVisible();
+  valvulas_aire.setVisible(isVisible);
+});
+
+
+const camaras = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/camaras.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: camarasStyle
+});
+
+
+valvulas_aapp.on('change:visible', () => {
+  const isVisible = valvulas_aapp.getVisible();
+  camaras.setVisible(isVisible);
+});
 
 
 
@@ -2159,14 +2325,21 @@ const map = new ol.Map(
         layers: [
             basemap,
             lindero,
-            //aall,
+            valvulas_aapp,
+            camaras,
+            valvulas_aire,
+            valvulas,
             //aass,
             //aass_camaras,
+            //aapp,
+            //aapp_camaras,
+            //aall,
             pt,
             puntos_pt,
             senderos,
+            bosques_contorno,
             bosques,
-            //ciclovia_proyectada,
+            ciclovia_proyectada,
             ciclovia_existente,
             parqueos,
             viasespol,
