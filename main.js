@@ -2325,7 +2325,7 @@ const map = new ol.Map(
         layers: [
             basemap,
             lindero,
-            valvulas_aapp,
+            //valvulas_aapp,
             camaras,
             valvulas_aire,
             valvulas,
