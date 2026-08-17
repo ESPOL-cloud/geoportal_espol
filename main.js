@@ -2360,7 +2360,7 @@ const map = new ol.Map(
 );
 
 //map.addLayer(lindero);
-//prueba
+
 
 
 const layerSwitcher = new ol.control.LayerSwitcher(
