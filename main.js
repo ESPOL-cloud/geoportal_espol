@@ -1007,7 +1007,14 @@ comodatos.on('change:visible', () => {
 
 const viaStyle = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: '#17191a', 
+    color: '#e91111', 
+    width: 2 
+  })
+});
+
+const via_secStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: '#39bfc9', 
     width: 2 
   })
 });
@@ -1015,7 +1022,6 @@ const viaStyle = new ol.style.Style({
 
 const viasespol = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/lin_espol.geojson', format: new ol.format.GeoJSON() }),
-  title: '<b>Vías</b>',
   visible: false,
   style: function(feature) {
     const attributeValue = feature.get('name'); 
@@ -1026,6 +1032,22 @@ const viasespol = new ol.layer.Vector({
     }
   }
 });
+
+const vias_prin_espol = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/lin_prin_espol.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Vías Principales',
+  visible: false,
+  style: viaStyle
+});
+
+const vias_sec_espol = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/lin_sec_espol.geojson', format: new ol.format.GeoJSON() }),
+  title: 'Vías Secundarias',
+  visible: false,
+  style: via_secStyle
+});
+
+
 
 
 /*
@@ -1053,7 +1075,7 @@ const infraestructura = new ol.layer.Group({
 
 const vias = new ol.layer.Group({
   title: 'Vías',
-  layers: [viasespol],
+  layers: [vias_sec_espol, vias_prin_espol, viasespol],
   fold: 'close'
 });
 
@@ -1378,7 +1400,9 @@ zonas.on('change:visible', () => {
 // Eliminar las polilineas de color Blue para no duplicar parqueos
 // Eliminar 2 parqueos incorrectos en zona 4
 // Seleccionar solo las polilineas con area igual a: 12.5, 20, 27.2, 36, 40
-// Hay 1741 parqueos
+// Hay 1739 parqueos  (1741 con los dos 'parqueos' en bosque zona 10)
+
+// Para el texto filtrar MText con Text Height 0.6 (queda 1 parqueo en zona 4 sin texto)
 
 const parqueosStyle = new ol.style.Style({
   fill: new ol.style.Fill({
@@ -1398,12 +1422,67 @@ const parqueos = new ol.layer.Vector({
   style: parqueosStyle
 });
 
+/*const parqueos_texto = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/parqueos_texto.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: function(feature, resolution) {
+    if (resolution < 0.5) {
+      // Muestra etiquetas al hacer zoom
+      const codigo = feature.get('Contents') || '';
+      let labelText = codigo; 
+        
+      curvas_textoStyle.getText().setText(labelText);
+    } else {
+      // Quita etiquetas al hacer zoom out
+      curvas_textoStyle.getText().setText('');
+    }
+    return curvas_textoStyle;
+  }
+});
+*/
+
+const parqueos_textoStyle = new ol.style.Style({
+  text: new ol.style.Text({
+    font: '12px Calibri,sans-serif',
+    fill: new ol.style.Fill({ color: '#000' }),
+    stroke: new ol.style.Stroke({ color: '#fff', width: 2 }),
+    // Crucial properties for alignment:
+    textAlign: 'center',       // Centers text horizontally on the coordinate
+    textBaseline: 'middle',    // Centers text vertically on the coordinate
+  })
+});
+
+const parqueos_texto = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/parqueos_texto.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  visible: false,
+  style: function(feature, resolution) {
+    if (resolution < 0.5) {
+      const codigo = feature.get('Contents') || '';
+      
+      // Update text and force centering
+      parqueos_textoStyle.getText().setText(codigo);
+      
+      // Optional: Add pixel offsets if your Civil 3D text 
+      // justification properties require manual fine-tuning
+      // textStyle.getText().setOffsetX(0); 
+      // textStyle.getText().setOffsetY(-5); // Negative moves text up
+
+      return parqueos_textoStyle;
+    } else {
+      return null; // Efficiently skips rendering when zoomed out
+    }
+  }
+});
 
 
 
-
-
-
+parqueos.on('change:visible', () => {
+  const isVisible = parqueos.getVisible();
+  parqueos_texto.setVisible(isVisible);
+});
 
 
 
@@ -1440,9 +1519,9 @@ const ciclovia_existente = new ol.layer.Vector({
   style: cicloviaStyle
 });
 
-
+// ciclovia_proy.geojson es la ciclovia continua, no por tramos
 const ciclovia_proyectada = new ol.layer.Vector({
-  source: new ol.source.Vector({ url: './capas/ciclovia_proy.geojson', format: new ol.format.GeoJSON() }),
+  source: new ol.source.Vector({ url: './capas/ciclovia_proy_tramos.geojson', format: new ol.format.GeoJSON() }),
   title: '<b>Ciclovía proyectada</b>',
   visible: false,
   style: cicloviaStyle2
@@ -2317,6 +2396,111 @@ valvulas_aapp.on('change:visible', () => {
 });
 
 
+//TOPOGRAFIA
+// Usar archivo dwg de sólo las CN (curvas de nivel)
+// Seleccionar lineas y polilineas con layers 47 y CVL_CURV_G  (21064 en total)
+// Escoger texto con layers COTA_CURVAS y CVL_CURV_TX
+// Usar comando TXT2MTXT (convertir a MText)
+// Colocar SE (settings), y quitar el check 'Combine into a single mtext object' 
+// Seleccionar todo los textos, en propiedad Justify seleccionar Middle center
+const curvas_nivelStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: 'rgb(248, 235, 48)', 
+    width: 2 
+  })
+});
+
+/*
+const curvas_textoStyle = new ol.style.Style({
+  image: new ol.style.Circle({
+    radius: 0, 
+    fill: new ol.style.Fill({
+      color: 'rgba(47, 49, 51, 0.9)' 
+    }),
+    stroke: new ol.style.Stroke({ 
+      color: '#17191a', 
+      width: 1 
+    })
+  }),
+  text: new ol.style.Text({
+    font: 'bold 12px Calibri,sans-serif',
+    fill: new ol.style.Fill({ color: '#17191a' }),
+    stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }),
+    offsetY: -20, 
+    text: ''
+  })
+});
+*/
+
+
+const curvas_nivel = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/curvas_nivel.geojson', format: new ol.format.GeoJSON() }),
+  title: '<b>Topografía</b>',
+  visible: false,
+  style: curvas_nivelStyle
+});
+
+/*
+const curvas_texto = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/curvas_texto.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: function(feature, resolution) {
+    if (resolution < 1.6) {
+      // Muestra etiquetas al hacer zoom
+      const codigo = feature.get('Contents') || '';
+      let labelText = codigo; 
+        
+      curvas_textoStyle.getText().setText(labelText);
+    } else {
+      // Quita etiquetas al hacer zoom out
+      curvas_textoStyle.getText().setText('');
+    }
+    return curvas_textoStyle;
+  }
+});
+*/
+
+const curvas_textoStyle = new ol.style.Style({
+  text: new ol.style.Text({
+    font: '12px Calibri,sans-serif',
+    fill: new ol.style.Fill({ color: '#000' }),
+    stroke: new ol.style.Stroke({ color: '#fff', width: 2 }),
+    // Crucial properties for alignment:
+    textAlign: 'center',       // Centers text horizontally on the coordinate
+    textBaseline: 'middle',    // Centers text vertically on the coordinate
+  })
+});
+
+const curvas_texto = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/curvas_texto.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  visible: false,
+  style: function(feature, resolution) {
+    if (resolution < 0.5) {
+      const codigo = feature.get('Contents') || '';
+      
+      // Update text and force centering
+      curvas_textoStyle.getText().setText(codigo);
+      
+      // Optional: Add pixel offsets if your Civil 3D text 
+      // justification properties require manual fine-tuning
+      // textStyle.getText().setOffsetX(0); 
+      // textStyle.getText().setOffsetY(-5); // Negative moves text up
+
+      return curvas_textoStyle;
+    } else {
+      return null; // Efficiently skips rendering when zoomed out
+    }
+  }
+});
+
+
+curvas_nivel.on('change:visible', () => {
+  const isVisible = curvas_nivel.getVisible();
+  curvas_texto.setVisible(isVisible);
+});
 
 
 const map = new ol.Map(
@@ -2325,7 +2509,9 @@ const map = new ol.Map(
         layers: [
             basemap,
             lindero,
-            //valvulas_aapp,
+            curvas_nivel,
+            curvas_texto,
+            valvulas_aapp,
             camaras,
             valvulas_aire,
             valvulas,
@@ -2333,7 +2519,7 @@ const map = new ol.Map(
             aass_camaras,
             //aapp,
             //aapp_camaras,
-            //aall,
+            aall,
             pt,
             puntos_pt,
             senderos,
@@ -2342,7 +2528,8 @@ const map = new ol.Map(
             ciclovia_proyectada,
             ciclovia_existente,
             parqueos,
-            viasespol,
+            //parqueos_texto,
+            vias,
             arriendos,
             puntos_arriendos,
             comodatos,
@@ -2360,7 +2547,7 @@ const map = new ol.Map(
 );
 
 //map.addLayer(lindero);
-
+// enero pasa con factura, febrero con ahorros; enero sin trabajar, febrero ya debería 
 
 
 const layerSwitcher = new ol.control.LayerSwitcher(
@@ -2775,14 +2962,14 @@ const popupElement = document.createElement('div');
 popupElement.id = 'comodato-map-control';
 popupElement.className = 'ol-unselectable ol-control'; 
 popupElement.style.position = 'absolute';
-popupElement.style.bottom = '20px';       
+popupElement.style.bottom = '10px';       
 popupElement.style.left = '20px';         
 popupElement.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
 popupElement.style.border = '1px solid #ccc';
 popupElement.style.borderRadius = '4px';
 popupElement.style.padding = '12px';
 popupElement.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
-popupElement.style.maxWidth = '350px';
+popupElement.style.maxWidth = '450px';
 popupElement.style.zIndex = '1000';
 popupElement.style.display = 'none';      
 
@@ -2800,9 +2987,20 @@ function updateComodatoTable() {
     return;
   }
 
+  // PARA ORDENAR TABLA ALFABETICAMENTE
+  features.sort((featureA, featureB) => {
+    // Extract the 'ref' strings safely
+    const refA = featureA.get('ref') ? String(featureA.get('ref')) : '';
+    const refB = featureB.get('ref') ? String(featureB.get('ref')) : '';
+    
+    // localeCompare handles alphabetical sorting perfectly (including casing and accents)
+    return refA.localeCompare(refB);
+  });
+
+
   let tableRowsHTML = '';
   
-  features.forEach((feature) => {
+  features.forEach((feature, index) => {   // index para hacer click
     const props = feature.getProperties(); 
     
     // 1. EXTRAE EL PROPIETARIO PARA VALIDACIÓN (Maneja nulos de forma segura)
@@ -2811,17 +3009,28 @@ function updateComodatoTable() {
     // 2. FILTRO CRUCIAL: Solo procesa el polígono si el campo contiene la palabra 'comodato'
     if (ref.includes('')) {
       
-      const refActual = props.ref || 'N/A';
+      const refActual = props.ref || 'N/A'; //hacer click en refActual para mostrar en el mapa
       const codigoActual = props.cod_act || 'N/A';
       const codigoAnterior = props.cod_ant || 'N/A';
       const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
+      const fecha_venc = props.fecha_venc || 'N/A';
+
+      // feature.getId PARA EL INDEX
+      if (!feature.getId()) {
+      feature.setId('comodato-' + index);
+    }
+
+      const featureId = feature.getId();
       
       tableRowsHTML += `
         <tr>
-          <td style="padding: 6px; border: 1px solid #ddd;">${refActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd;">
+          <span class="zoom-to-feature" data-id="${featureId}" style="color: #141516; text-decoration: underline; cursor: pointer; font-weight: bold;">
+            ${refActual}</span></td>
           <td style="padding: 6px; border: 1px solid #ddd;">${codigoActual}</td>
           <td style="padding: 6px; border: 1px solid #ddd;">${codigoAnterior}</td>
           <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${fecha_venc}</td>
         </tr>
       `;
     }
@@ -2843,6 +3052,7 @@ function updateComodatoTable() {
           <th style="padding: 6px; border: 1px solid #ddd;">Cód. Actual</th>
           <th style="padding: 6px; border: 1px solid #ddd;">Cód. Ant.</th>
           <th style="padding: 6px; border: 1px solid #ddd; text-align: center;">Zona</th>
+          <th style="padding: 6px; border: 1px solid #ddd; text-align: center;">F.V.</th>
         </tr>
         ${tableRowsHTML}
       </table>
@@ -2871,19 +3081,49 @@ comodatos.getSource().on('featuresloadend', () => {
 
 
 
+// PARA HACER CLICK EN TABLA Y MOSTRAR EN EL MAPA EL ELEMENTO
+popupElement.addEventListener('click', function(event) {
+  // Check if the clicked element has our specific zoom class template
+  if (event.target.classList.contains('zoom-to-feature')) {
+    const featureId = event.target.getAttribute('data-id');
+    const source = comodatos.getSource();
+    
+    // Find the original map feature by its unique internal string identification key
+    const targetFeature = source.getFeatureById(featureId);
+    
+    if (targetFeature) {
+      const geometry = targetFeature.getGeometry();
+      const view = map.getView();
+      
+      if (geometry) {
+        // Fit the map viewport cleanly around the polygon boundaries
+        view.fit(geometry.getExtent(), {
+          size: map.getSize(),
+          duration: 1000, // Smooth 1-second zoom animation transition effect
+          maxZoom: 18     // Prevents zooming in too close on tiny polygon structures
+        });
+      }
+    }
+  }
+});
+
+
+
+
+
 // TABLA PARA ARRIENDOS
 const popupElement_arriendo = document.createElement('div');
 popupElement_arriendo.id = 'arriendo-map-control';
 popupElement_arriendo.className = 'ol-unselectable ol-control'; 
 popupElement_arriendo.style.position = 'absolute';
-popupElement_arriendo.style.bottom = '20px';       
+popupElement_arriendo.style.bottom = '10px';       
 popupElement_arriendo.style.left = '20px';         
 popupElement_arriendo.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
 popupElement_arriendo.style.border = '1px solid #ccc';
 popupElement_arriendo.style.borderRadius = '4px';
 popupElement_arriendo.style.padding = '12px';
 popupElement_arriendo.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
-popupElement_arriendo.style.maxWidth = '350px';
+popupElement_arriendo.style.maxWidth = '450px';
 popupElement_arriendo.style.zIndex = '1000';
 popupElement_arriendo.style.display = 'none';      
 
@@ -2901,9 +3141,22 @@ function updateArriendoTable() {
     return;
   }
 
+
+
+  // PARA ORDENAR TABLA ALFABETICAMENTE
+  features.sort((featureA, featureB) => {
+    // Extract the 'ref' strings safely
+    const refA = featureA.get('ref') ? String(featureA.get('ref')) : '';
+    const refB = featureB.get('ref') ? String(featureB.get('ref')) : '';
+    
+    // localeCompare handles alphabetical sorting perfectly (including casing and accents)
+    return refA.localeCompare(refB);
+  });
+  
+
   let tableRowsHTML = '';
   
-  features.forEach((feature) => {
+  features.forEach((feature, index) => { // index para hacer click
     const props = feature.getProperties(); 
     
     // 1. EXTRAE EL PROPIETARIO PARA VALIDACIÓN (Maneja nulos de forma segura)
@@ -2916,13 +3169,24 @@ function updateArriendoTable() {
       const codigoActual = props.cod_act || 'N/A';
       const codigoAnterior = props.cod_ant || 'N/A';
       const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
+      const fecha_venc = props.fecha_venc || 'N/A';
+
+      // feature.getId PARA EL INDEX
+      if (!feature.getId()) {
+      feature.setId('arriendo-' + index);
+    }
+
+      const featureId = feature.getId();
       
       tableRowsHTML += `
         <tr>
-          <td style="padding: 6px; border: 1px solid #ddd;">${refActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd;">
+          <span class="zoom-to-feature" data-id="${featureId}" style="color: #141516; text-decoration: underline; cursor: pointer; font-weight: bold;">
+          ${refActual}</span></td>
           <td style="padding: 6px; border: 1px solid #ddd;">${codigoActual}</td>
           <td style="padding: 6px; border: 1px solid #ddd;">${codigoAnterior}</td>
           <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
+          <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${fecha_venc}</td>
         </tr>
       `;
     }
@@ -2944,6 +3208,7 @@ function updateArriendoTable() {
           <th style="padding: 6px; border: 1px solid #ddd;">Cód. Actual</th>
           <th style="padding: 6px; border: 1px solid #ddd;">Cód. Ant.</th>
           <th style="padding: 6px; border: 1px solid #ddd; text-align: center;">Zona</th>
+          <th style="padding: 6px; border: 1px solid #ddd; text-align: center;">F.V.</th>
         </tr>
         ${tableRowsHTML}
       </table>
@@ -2971,6 +3236,32 @@ arriendos.getSource().on('featuresloadend', () => {
 });
 
 
+
+// PARA HACER CLICK EN TABLA Y MOSTRAR EN EL MAPA EL ELEMENTO
+popupElement_arriendo.addEventListener('click', function(event) {
+  // Check if the clicked element has our specific zoom class template
+  if (event.target.classList.contains('zoom-to-feature')) {
+    const featureId = event.target.getAttribute('data-id');
+    const source = arriendos.getSource();
+    
+    // Find the original map feature by its unique internal string identification key
+    const targetFeature = source.getFeatureById(featureId);
+    
+    if (targetFeature) {
+      const geometry = targetFeature.getGeometry();
+      const view = map.getView();
+      
+      if (geometry) {
+        // Fit the map viewport cleanly around the polygon boundaries
+        view.fit(geometry.getExtent(), {
+          size: map.getSize(),
+          duration: 1000, // Smooth 1-second zoom animation transition effect
+          maxZoom: 18     // Prevents zooming in too close on tiny polygon structures
+        });
+      }
+    }
+  }
+});
 
 
 
@@ -3178,7 +3469,7 @@ const popupElement_pt = document.createElement('div');
 popupElement_pt.id = 'arriendo-map-control';
 popupElement_pt.className = 'ol-unselectable ol-control'; 
 popupElement_pt.style.position = 'absolute';
-popupElement_pt.style.bottom = '20px';       
+popupElement_pt.style.bottom = '10px';       
 popupElement_pt.style.left = '20px';         
 popupElement_pt.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
 popupElement_pt.style.border = '1px solid #ccc';
@@ -3203,9 +3494,21 @@ function updateptTable() {
     return;
   }
 
+  // PARA ORDENAR TABLA ALFABETICAMENTE
+  features.sort((featureA, featureB) => {
+    // Extract the 'ref' strings safely
+    const refA = featureA.get('ref') ? String(featureA.get('ref')) : '';
+    const refB = featureB.get('ref') ? String(featureB.get('ref')) : '';
+    
+    // localeCompare handles alphabetical sorting perfectly (including casing and accents)
+    return refA.localeCompare(refB);
+  });
+
+
+
   let tableRowsHTML = '';
   
-  features.forEach((feature) => {
+  features.forEach((feature, index) => {
     const props = feature.getProperties(); 
     
     // 1. EXTRAE EL PROPIETARIO PARA VALIDACIÓN (Maneja nulos de forma segura)
@@ -3218,10 +3521,20 @@ function updateptTable() {
       const codigoActual = props.código_actual || 'N/A';
       const codigoAnterior = props.código_anterior || 'N/A';
       const zona = props.zona !== undefined && props.zona !== null ? props.zona : 'N/A';
+
+
+      // feature.getId PARA EL INDEX
+      if (!feature.getId()) {
+      feature.setId('comodato-' + index);
+    }
+
+      const featureId = feature.getId();
       
       tableRowsHTML += `
         <tr>
-          <td style="padding: 6px; border: 1px solid #ddd;">${refActual}</td>
+          <td style="padding: 6px; border: 1px solid #ddd;">
+          <span class="zoom-to-feature" data-id="${featureId}" style="color: #141516; text-decoration: underline; cursor: pointer; font-weight: bold;">
+          ${refActual}</span></td>
           <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${codigoActual}</td>
           <td style="padding: 6px; border: 1px solid #ddd; color: #555;">${codigoAnterior}</td>
           <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${zona}</td>
@@ -3273,7 +3586,31 @@ pt.getSource().on('featuresloadend', () => {
 });
 
 
-
+// PARA HACER CLICK EN TABLA Y MOSTRAR EN EL MAPA EL ELEMENTO
+popupElement_pt.addEventListener('click', function(event) {
+  // Check if the clicked element has our specific zoom class template
+  if (event.target.classList.contains('zoom-to-feature')) {
+    const featureId = event.target.getAttribute('data-id');
+    const source = pt.getSource();
+    
+    // Find the original map feature by its unique internal string identification key
+    const targetFeature = source.getFeatureById(featureId);
+    
+    if (targetFeature) {
+      const geometry = targetFeature.getGeometry();
+      const view = map.getView();
+      
+      if (geometry) {
+        // Fit the map viewport cleanly around the polygon boundaries
+        view.fit(geometry.getExtent(), {
+          size: map.getSize(),
+          duration: 1000, // Smooth 1-second zoom animation transition effect
+          maxZoom: 18     // Prevents zooming in too close on tiny polygon structures
+        });
+      }
+    }
+  }
+});
 
 
 
