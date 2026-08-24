@@ -2528,7 +2528,7 @@ const map = new ol.Map(
             ciclovia_proyectada,
             ciclovia_existente,
             parqueos,
-            //parqueos_texto,
+            parqueos_texto,
             vias,
             arriendos,
             puntos_arriendos,
