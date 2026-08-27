@@ -1067,11 +1067,13 @@ var lindero = new ol.layer.Tile({
 });
 */
 
+/*
 const infraestructura = new ol.layer.Group({
   title: 'Infraestructuras',
   layers: [edificaciones],
   fold: 'close',
 });
+*/
 
 const vias = new ol.layer.Group({
   title: 'Vías',
@@ -2349,6 +2351,8 @@ const camarasStyle = new ol.style.Style({
 
 
 // El archivo dwg de valvulas incluye las redes aa.pp. con las coordenadas correctas
+// HAY UNA VALVULA QUE SE REPITE (V87 en valvulas y valvulas_aire)
+// REVISAR SI FALTA UN ELEMENTO
 const valvulas = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/valvulas.geojson', format: new ol.format.GeoJSON() }),
   visible: false,
@@ -2478,7 +2482,7 @@ const curvas_texto = new ol.layer.Vector({
   }),
   visible: false,
   style: function(feature, resolution) {
-    if (resolution < 0.5) {
+    if (resolution < 0.8) {
       const codigo = feature.get('Contents') || '';
       
       // Update text and force centering
@@ -2503,16 +2507,806 @@ curvas_nivel.on('change:visible', () => {
 });
 
 
+// INFRAESTRUCTURA EXISTENTE
+const infraestructuraStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(45, 199, 39)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const infraestructura_deportesStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(255, 52, 25)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const infraestructura_serviciosStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(16, 81, 202)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const infraestructura_servicios_bancoStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(8, 8, 8)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const infraestructura_servicios_barStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(16, 81, 202)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const infraestructura_servicios_medStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(250, 46, 31)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const infraestructura_servicios_biblioStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(247, 159, 45)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+
+
+const acceso_peatonalStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: '#0832a7', 
+    width: 3
+  })
+});
+
+const acceso_vehicularStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: '#f8f532', 
+    width: 3
+  })
+});
+
+
+
+const infraestructura_auditorio = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Auditorios",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+    if (attributeValue && attributeValue.toLowerCase().includes('auditorio')) {
+
+      const stylesToRender = [infraestructuraStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Auditorio'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } else {
+      return null; 
+    }
+  }
+});
+
+const infraestructura_deportes = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Áreas Deportivas",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('zonas'); 
+    
+    if (attributeValue && attributeValue.toLowerCase().includes('deportes')) {
+
+      const stylesToRender = [infraestructura_deportesStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Servicios'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } else {
+      return null; 
+    }
+  }
+});
+
+/*
+const infraestructura_servicios = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Servicios",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+    if (attributeValue && attributeValue.toLowerCase().includes('banco')) {
+
+      const stylesToRender = [infraestructura_servicios_bancoStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Servicios'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+    
+    
+    else if (attributeValue && attributeValue.toLowerCase().includes('bar')) {
+
+      const stylesToRender = [infraestructura_servicios_barStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Servicios'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+    
+
+    else if (attributeValue && attributeValue.toLowerCase().includes('biblioteca')) {
+
+      const stylesToRender = [infraestructura_servicios_biblioStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Servicios'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+
+
+    else if (attributeValue && attributeValue.toLowerCase().includes('médico')) {
+
+      const stylesToRender = [infraestructura_servicios_medStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Servicios'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+
+
+    
+    
+    else {
+      return null; 
+    }
+  }
+});
+*/
+
+
+
+const infraestructura_banco = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Banco",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+    if (attributeValue && attributeValue.toLowerCase().includes('banco')) {
+
+      const stylesToRender = [infraestructura_servicios_bancoStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Servicios'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+
+    else {
+      return null; 
+    }
+  }
+});
+
+const infraestructura_bar = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Bar/Cafetería/Comedor",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+    if (attributeValue && attributeValue.toLowerCase().includes('bar')) {
+
+      const stylesToRender = [infraestructura_servicios_barStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Servicios'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+    
+
+    
+    
+    else {
+      return null; 
+    }
+  }
+});
+
+const infraestructura_biblio = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Biblioteca",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+
+    if (attributeValue && attributeValue.toLowerCase().includes('biblioteca')) {
+
+      const stylesToRender = [infraestructura_servicios_biblioStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Servicios'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+
+
+
+
+    
+    
+    else {
+      return null; 
+    }
+  }
+});
+
+const infraestructura_med = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Dispensario Médico",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+
+    if (attributeValue && attributeValue.toLowerCase().includes('médico')) {
+
+      const stylesToRender = [infraestructura_servicios_medStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Servicios'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+
+
+    
+    
+    else {
+      return null; 
+    }
+  }
+});
+
+const infraestructura_puentes = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Puentes",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('zonas'); 
+    
+
+    if (attributeValue && attributeValue.toLowerCase().includes('puentes')) {
+
+      const stylesToRender = [infraestructuraStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Servicios'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+
+
+    
+    
+    else {
+      return null; 
+    }
+  }
+});
+
+
+
+const infraestructura_polig = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+      const stylesToRender = [infraestructuraStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Auditorio'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } else {
+      return null; 
+    }
+  }
+});
+
+const acceso_peatonal = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura_acceso.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Acceso peatonal",
+  visible: false,
+  style: function(feature) {
+    const attributeValue = feature.get('acceso'); 
+
+    if (attributeValue && attributeValue.toLowerCase().includes('peatonal')) {
+      return acceso_peatonalStyle
+    } else {
+      return null; 
+    }
+    }
+});
+
+const acceso_vehicular = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura_acceso.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Acceso vehicular",
+  visible: false,
+  style: function(feature) {
+    const attributeValue = feature.get('acceso'); 
+
+    if (attributeValue && attributeValue.toLowerCase().includes('vehicular')) {
+      return acceso_vehicularStyle
+    } else {
+      return null; 
+    }
+    }
+});
+
+
+const infraestructura = new ol.layer.Group({
+  title: 'Infraestructura existente',
+  layers: [infraestructura_puentes, acceso_peatonal, /*infraestructura_servicios*/
+    infraestructura_med, infraestructura_biblio, infraestructura_bar, infraestructura_banco, infraestructura_deportes, infraestructura_auditorio, /*infraestructura_polig*/],
+  fold: 'close',
+});
+
+
+
+// FIBRA OPTICA
+// Fibra optica 1 (124 polilineas)
+// Fibra optica 2 (10 elementos) están desfasadas las coordenadas en Civil 3D
+const fibra_canalStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: '#0832a7', 
+    width: 3
+  })
+});
+
+const fibra_opticaStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: '#32ebe1', 
+    width: 3
+  })
+});
+
+const fibra_optica1 = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/fibra_optica1.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "<b>Fibra Óptica</b>",
+  visible: false,
+  style: function(feature) {
+    const attributeValue = feature.get('Color'); 
+
+    if (attributeValue && attributeValue.toLowerCase().includes('blue')) {
+      return fibra_canalStyle
+    } 
+    else if (attributeValue && attributeValue.toLowerCase().includes('122')) {
+      return fibra_opticaStyle
+    } 
+    else {
+      return null; 
+    }
+    }
+});
+
+const fibra_optica2 = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/fibra_optica2.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  //title: "<b>Fibra Óptica2</b>",
+  visible: false,
+  style: fibra_opticaStyle
+});
+
+
+fibra_optica1.on('change:visible', () => {
+  const isVisible = fibra_optica1.getVisible();
+  fibra_optica2.setVisible(isVisible);
+});
+
+
 const map = new ol.Map(
     {   
         target: "map",
         layers: [
             basemap,
             lindero,
+            fibra_optica2,
+            fibra_optica1,
+            infraestructura,
             curvas_nivel,
             curvas_texto,
             valvulas_aapp,
-            camaras,
+            //camaras,
             valvulas_aire,
             valvulas,
             aass,
@@ -2936,6 +3730,25 @@ map.on('singleclick', function (evt) {
     '<tr><td><strong>Ref.</strong></td><td>'+ (props.referencia_inmueble || 'N/A') + '</td></tr>' +
     '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.área_total_construcción || 'N/A') + '</td></tr>';
   }
+
+  else if (typeof valvulas_aire !== 'undefined' && clickedLayer === valvulas_aire) {
+    htmlContent += 
+    '<tr><td><strong>Ubicación</strong></td><td>'+ (props.UBICACION || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>Cámara</strong></td><td>'+ (props.CAMARA || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>Diámetro</strong></td><td>'+ (props.DIAMETRO || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>Tipo Válvula</strong></td><td>'+ (props.TIPO_VALV || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>Marca</strong></td><td>'+ (props.MARCA || 'N/A') + '</td></tr>';
+  }
+
+  else if (typeof valvulas !== 'undefined' && clickedLayer === valvulas) {
+    htmlContent += 
+    '<tr><td><strong>Ubicación</strong></td><td>'+ (props.UBICACION || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>Cámara</strong></td><td>'+ (props.CAMARA || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>Diámetro</strong></td><td>'+ (props.DIAMETRO || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>Tipo Válvula</strong></td><td>'+ (props.TIPO_VALV || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>Marca</strong></td><td>'+ (props.MARCA || 'N/A') + '</td></tr>';
+  }
+
 
   // --- CASO 3: CUALQUIER OTRA CAPA (Automatizada para que nunca falle) ---
   else {
