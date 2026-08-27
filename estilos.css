@@ -128,3 +128,27 @@
     /*padding-bottom: 6px;      /* Adds vertical space below the text */  
     display: inline-block;
 }
+
+
+
+@media (max-width: 768px) {
+  /* Shrink the overall panel width and set margins */
+  .layer-switcher, 
+  .layer-switcher.shown {
+    width: 220px !important; /* Forces a smaller, thumb-friendly width */
+    max-width: 70vw !important; /* Prevents it from consuming the screen */
+  }
+
+  /* Make the inner layer list scrollable so it doesn't bleed off the bottom */
+  .layer-switcher .panel {
+    max-height: 250px !important; /* Limits the height */
+    overflow-y: auto !important;   /* Enables vertical scrolling */
+    -webkit-overflow-scrolling: touch; /* Ensures smooth scrolling on iOS */
+    font-size: 14px !important;   /* Makes text legible but compact */
+  }
+
+  /* Slightly reduce spacing between items to save vertical room */
+  .layer-switcher li {
+    padding: 4px 2px !important;
+  }
+}
