@@ -2037,7 +2037,7 @@ const senderos9 = new ol.layer.Vector({
 
 const senderos = new ol.layer.Group({
   title: 'Senderos',
-  layers: [senderos9, senderos8, senderos7, senderos6, senderos5, senderos4, senderos3, senderos2, senderos1, senderos_lin],
+  layers: [senderos9, senderos8, senderos7, senderos6, senderos5, senderos4, senderos3, senderos2, senderos1, /*senderos_lin*/],
   fold: 'close',
 });
 
