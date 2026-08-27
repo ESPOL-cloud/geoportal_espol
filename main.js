@@ -3294,12 +3294,90 @@ fibra_optica1.on('change:visible', () => {
 });
 
 
+
+
+
+
+
+// SONDEO GEOTECNICO
+const sondeoStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(224, 127, 0)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const sondeo = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/sondeo.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "<b>Sondeo Geotécnico</b>",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('Layer'); 
+    
+
+    if (attributeValue && attributeValue.toLowerCase().includes('')) {
+
+      // 1. Clone the geometry so we don't alter the source file data coordinates
+      const scaledGeometry = feature.getGeometry().clone();
+      
+      // 2. Scale the geometry up. Change 1.5 to whatever multiplier you want 
+      // (e.g., 2.0 doubles the size, 0.5 cuts it in half)
+      scaledGeometry.scale(3); 
+      
+      // 3. Assign this new scaled geometry explicitly to your base style
+      // (Assuming sondeoStyle is your ol.style.Style variable declared outside)
+      sondeoStyle.setGeometry(scaledGeometry);
+
+      const stylesToRender = [sondeoStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1.6) {
+        const labelText = feature.get('Layer') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+    }
+});
+
+
 const map = new ol.Map(
     {   
         target: "map",
         layers: [
             basemap,
             lindero,
+            sondeo,
             fibra_optica2,
             fibra_optica1,
             infraestructura,
