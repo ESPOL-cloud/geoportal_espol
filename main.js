@@ -117,7 +117,7 @@ const poligonosStyle = new ol.style.Style({
 
 const poligonosStyle1 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(109, 100, 52, 0.7)'    // El 0.5 se refiere a la opacidad
+    color: 'rgba(109, 100, 52, 0.6)'    // El 0.5 se refiere a la opacidad
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -127,7 +127,7 @@ const poligonosStyle1 = new ol.style.Style({
 
 const poligonosStyle2 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(19, 114, 32, 0.7)'  
+    color: 'rgba(19, 114, 32, 0.6)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -137,7 +137,7 @@ const poligonosStyle2 = new ol.style.Style({
 
 const poligonosStyle3 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(87, 226, 106, 0.7)'    
+    color: 'rgba(87, 226, 106, 0.6)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -147,7 +147,7 @@ const poligonosStyle3 = new ol.style.Style({
 
 const poligonosStyle4 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(26, 67, 128, 0.7)'   
+    color: 'rgba(26, 67, 128, 0.6)'   
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -157,7 +157,7 @@ const poligonosStyle4 = new ol.style.Style({
 
 const poligonosStyle5 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(103, 196, 196, 0.7)'    
+    color: 'rgba(103, 196, 196, 0.6)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -167,7 +167,7 @@ const poligonosStyle5 = new ol.style.Style({
 
 const poligonosStyle6 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(15, 15, 15, 0.7)'    
+    color: 'rgba(15, 15, 15, 0.6)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -177,7 +177,7 @@ const poligonosStyle6 = new ol.style.Style({
 
 const poligonosStyle7 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(236, 110, 26, 0.7)'  
+    color: 'rgba(236, 110, 26, 0.6)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -187,7 +187,7 @@ const poligonosStyle7 = new ol.style.Style({
 
 const poligonosStyle8 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(250, 235, 29, 0.7)'   
+    color: 'rgba(250, 235, 29, 0.6)'   
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -197,7 +197,7 @@ const poligonosStyle8 = new ol.style.Style({
 
 const poligonosStyle9 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(81, 11, 173, 0.7)'  
+    color: 'rgba(81, 11, 173, 0.6)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -207,7 +207,7 @@ const poligonosStyle9 = new ol.style.Style({
 
 const poligonosStyle10 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(255, 38, 23, 0.7)'    
+    color: 'rgba(255, 38, 23, 0.6)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -217,7 +217,7 @@ const poligonosStyle10 = new ol.style.Style({
 
 const poligonosStyle11 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(120, 127, 128, 0.7)'    
+    color: 'rgba(120, 127, 128, 0.6)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -227,7 +227,7 @@ const poligonosStyle11 = new ol.style.Style({
 
 const poligonosStyle12 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(20, 63, 126, 0.7)'    
+    color: 'rgba(20, 63, 126, 0.6)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -237,7 +237,7 @@ const poligonosStyle12 = new ol.style.Style({
 
 const poligonosStyle13 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(126, 185, 111, 0.7)'    
+    color: 'rgba(126, 185, 111, 0.6)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -247,7 +247,7 @@ const poligonosStyle13 = new ol.style.Style({
 
 const poligonosStyle14 = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(196, 64, 178, 0.7)'    
+    color: 'rgba(196, 64, 178, 0.6)'    
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -2510,7 +2510,7 @@ curvas_nivel.on('change:visible', () => {
 // INFRAESTRUCTURA EXISTENTE
 const infraestructuraStyle = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(45, 199, 39, 0.7)'  
+    color: 'rgba(45, 199, 39, 0.6)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -2520,7 +2520,7 @@ const infraestructuraStyle = new ol.style.Style({
 
 const infraestructura_deportesStyle = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(255, 52, 25, 0.7)'  
+    color: 'rgba(255, 52, 25, 0.6)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -2530,7 +2530,7 @@ const infraestructura_deportesStyle = new ol.style.Style({
 
 const infraestructura_serviciosStyle = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(16, 81, 202, 0.7)'  
+    color: 'rgba(16, 81, 202, 0.6)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -2540,7 +2540,7 @@ const infraestructura_serviciosStyle = new ol.style.Style({
 
 const infraestructura_servicios_bancoStyle = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(8, 8, 8, 0.7)'  
+    color: 'rgba(8, 8, 8, 0.6)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -2550,7 +2550,7 @@ const infraestructura_servicios_bancoStyle = new ol.style.Style({
 
 const infraestructura_servicios_barStyle = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(16, 81, 202, 0.7)'  
+    color: 'rgba(16, 81, 202, 0.6)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -2560,7 +2560,7 @@ const infraestructura_servicios_barStyle = new ol.style.Style({
 
 const infraestructura_servicios_medStyle = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(250, 46, 31, 0.7)'  
+    color: 'rgba(250, 46, 31, 0.6)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
@@ -2570,7 +2570,7 @@ const infraestructura_servicios_medStyle = new ol.style.Style({
 
 const infraestructura_servicios_biblioStyle = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(247, 159, 45, 0.7)'  
+    color: 'rgba(247, 159, 45, 0.6)'  
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
