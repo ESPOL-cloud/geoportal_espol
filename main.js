@@ -4560,7 +4560,7 @@ function updatebosquesTable() {
     if (!agrupadoPorZona[zonaOriginal]) {
       agrupadoPorZona[zonaOriginal] = {
         sumaHectareas: 0,
-        featureId: featureId // Stores the ID of the first feature found with this name
+        featureId: featureId 
       };
     }
 
@@ -4568,14 +4568,35 @@ function updatebosquesTable() {
     agrupadoPorZona[zonaOriginal].sumaHectareas += hectareasNum;
   });
 
-  // 2. GENERATE TABLE ROWS FROM THE ACCUMULATOR
-  let tableRowsHTML = '';
-  let granTotalHectareas = 0; // <-- TRACK TOTAL SUM
+  // 2. DEFINE AND APPLY THE PRECISE LONG-TEXT ROW ORDER
+  const ordenDeseado = [
+    'PROTECCIÓN PERMANENTE', 
+    'REFORESTACIÓN CON FINES DE CONSERVACIÓN', 
+    'BOSQUE NATURAL', 
+    'DESARROLLO TURISTICO Y DE SOSTENIBILIDAD', 
+    'INFRAESTRUCTURA PARA VIVIENDA, CAMINOS Y OTRAS CONSTRUCCIONES'
+  ];
   
-  Object.keys(agrupadoPorZona).forEach((nombreZona) => {
+  const zonasOrdenadas = Object.keys(agrupadoPorZona).sort((a, b) => {
+    // Standardize text format (.trim and .toUpperCase) to secure a perfect match
+    const indexA = ordenDeseado.indexOf(a.trim().toUpperCase());
+    const indexB = ordenDeseado.indexOf(b.trim().toUpperCase());
+    
+    // If a zone name isn't found in your predefined list, send it to the bottom
+    const posA = indexA === -1 ? 999 : indexA;
+    const posB = indexB === -1 ? 999 : indexB;
+    
+    return posA - posB;
+  });
+
+  // 3. GENERATE TABLE ROWS FROM THE SORTED ARRAY
+  let tableRowsHTML = '';
+  let granTotalHectareas = 0; 
+  
+  zonasOrdenadas.forEach((nombreZona) => {
     const datosZona = agrupadoPorZona[nombreZona];
     
-    // Round to 2 decimals to prevent JS floating-point precision bugs (e.g., 4.000000002)
+    // Round to 2 decimals to prevent JS floating-point precision bugs
     const totalHectareas = Number(datosZona.sumaHectareas.toFixed(2));
     
     // Add to grand total
@@ -4583,31 +4604,30 @@ function updatebosquesTable() {
 
     tableRowsHTML += `
       <tr>
-        <td style="padding: 6px; border: 1px solid #ddd;">
+        <td style="padding: 6px; border: 1px solid #ddd; line-height: 1.2;">
           <span data-id="${datosZona.featureId}" style="color: #141516; cursor: pointer;">
             ${nombreZona}
           </span>
         </td>
-        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${totalHectareas}</td>
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; text-align: right;">${totalHectareas}</td>
       </tr>
     `;
   });
 
-  // 3. APPEND THE GRAND TOTAL ROW (Only if there are matching rows)
+  // 4. APPEND THE GRAND TOTAL ROW
   if (tableRowsHTML !== '') {
     const totalFinalRedondeado = Number(granTotalHectareas.toFixed(2));
     tableRowsHTML += `
       <tr style="background-color: #f1f3f5; border-top: 2px solid #aaa;">
         <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707;">TOTAL GENERAL</td>
-        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707;">${totalFinalRedondeado}</td>
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707; text-align: right;">${totalFinalRedondeado}</td>
       </tr>
     `;
   } else {
-    // FALLBACK MESSAGE
     tableRowsHTML = `<tr><td colspan="2" style="padding: 10px; text-align: center; color: #888;">No se encontraron datos activos</td></tr>`;
   }
 
-  // 4. RENDER HTML TABLE
+  // 5. RENDER HTML TABLE
   popupElement_bosques.innerHTML = `
     <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
       Bosques
@@ -4616,7 +4636,7 @@ function updatebosquesTable() {
       <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 14px;">
         <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
           <th style="padding: 6px; border: 1px solid #ddd;">Referencia</th>
-          <th style="padding: 6px; border: 1px solid #ddd;">Hectáreas</th>
+          <th style="padding: 6px; border: 1px solid #ddd; text-align: right;">Hectáreas</th>
         </tr>
         ${tableRowsHTML}
       </table>
