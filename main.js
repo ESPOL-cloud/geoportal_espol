@@ -4670,7 +4670,7 @@ bosques1.getSource().on('featuresloadend', () => {
 });
 
 
-
+/*
 // TABLA PARA VIAS
 const popupElement_vias = document.createElement('div');
 popupElement_vias.id = 'arriendo-map-control';
@@ -4820,7 +4820,7 @@ lin_vias.getSource().on('featuresloadend', () => {
     updateviasTable();
   }
 });
-
+*/
 
 
 
