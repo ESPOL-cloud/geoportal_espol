@@ -4824,6 +4824,166 @@ lin_vias.getSource().on('featuresloadend', () => {
 
 
 
+// TABLA PARA SENDEROS
+const popupElement_senderos = document.createElement('div');
+popupElement_senderos.id = 'arriendo-map-control';
+popupElement_senderos.className = 'ol-unselectable ol-control'; 
+popupElement_senderos.style.position = 'absolute';
+popupElement_senderos.style.bottom = '10px';       
+popupElement_senderos.style.left = '20px';         
+popupElement_senderos.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+popupElement_senderos.style.border = '1px solid #ccc';
+popupElement_senderos.style.borderRadius = '4px';
+popupElement_senderos.style.padding = '12px';
+popupElement_senderos.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
+popupElement_senderos.style.maxWidth = '350px';
+popupElement_senderos.style.zIndex = '1000';
+popupElement_senderos.style.display = 'none';      
+
+const senderosTableControl = new ol.control.Control({ element: popupElement_senderos });
+map.addControl(senderosTableControl);
+
+// 2. SEPARATED FUNCTION: This builds and displays the table safely
+function updatesenderosTable() {
+  const source = senderos1.getSource();
+  const features = source.getFeatures(); 
+  
+  if (features.length === 0) {
+    popupElement_senderos.innerHTML = `<div style="font-size:12px; color:#666; padding:10px;">Cargando datos...</div>`;
+    popupElement_senderos.style.display = 'block';
+    return;
+  }
+
+  // 1. ACUMULATOR OBJECT: Group and sum everything by zone name
+  const agrupadoPorZona = {};
+  
+  features.forEach((feature, index) => {
+    const props = feature.getProperties(); 
+    const zonaOriginal = props.senderos || 'N/A';
+
+    // Parse hectares safely into a number
+    const viasNum = parseFloat(props.longitud) || 0;
+
+    // Ensure the feature has an ID for zooming capabilities
+    if (!feature.getId()) {
+      feature.setId('comodato-' + index);
+    }
+    const featureId = feature.getId();
+
+    // If the zone name doesn't exist in our dictionary yet, initialize it
+    if (!agrupadoPorZona[zonaOriginal]) {
+      agrupadoPorZona[zonaOriginal] = {
+        sumaVias: 0,
+        featureId: featureId 
+      };
+    }
+
+    // Accumulate the hectares
+    agrupadoPorZona[zonaOriginal].sumaVias += viasNum;
+  });
+
+  // 2. DEFINE AND APPLY THE PRECISE LONG-TEXT ROW ORDER
+  const ordenDeseado = [
+    'DEPORTIVO', 
+    'TURISTICO',
+    'CIENTÍFICO - ACADÉMICO',
+    'SENDERO ESPOL',
+    'SENDERO BVPP',
+    'SERVIDUMBRE POLIDUCTO',
+  ];
+  
+  const zonasOrdenadas = Object.keys(agrupadoPorZona).sort((a, b) => {
+    // Standardize text format (.trim and .toUpperCase) to secure a perfect match
+    const indexA = ordenDeseado.indexOf(a.trim().toUpperCase());
+    const indexB = ordenDeseado.indexOf(b.trim().toUpperCase());
+    
+    // If a zone name isn't found in your predefined list, send it to the bottom
+    const posA = indexA === -1 ? 999 : indexA;
+    const posB = indexB === -1 ? 999 : indexB;
+    
+    return posA - posB;
+  });
+
+  // 3. GENERATE TABLE ROWS FROM THE SORTED ARRAY
+  let tableRowsHTML = '';
+  let granTotalVias = 0; 
+  
+  zonasOrdenadas.forEach((nombreZona) => {
+    const datosZona = agrupadoPorZona[nombreZona];
+    
+    // Round to 2 decimals to prevent JS floating-point precision bugs
+    const totalVias = Number(datosZona.sumaVias.toFixed(2));
+    
+    // Add to grand total
+    granTotalVias += totalVias;
+
+    tableRowsHTML += `
+      <tr>
+        <td style="padding: 6px; border: 1px solid #ddd; line-height: 1.2;">
+          <span data-id="${datosZona.featureId}" style="color: #141516; cursor: pointer;">
+            ${nombreZona}
+          </span>
+        </td>
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; text-align: right;">${totalVias}</td>
+      </tr>
+    `;
+  });
+
+  // 4. APPEND THE GRAND TOTAL ROW
+  if (tableRowsHTML !== '') {
+    const totalFinalRedondeado = Number(granTotalVias.toFixed(2));
+    tableRowsHTML += `
+      <tr style="background-color: #f1f3f5; border-top: 2px solid #aaa;">
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707;">TOTAL</td>
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707; text-align: right;">${totalFinalRedondeado}</td>
+      </tr>
+    `;
+  } else {
+    tableRowsHTML = `<tr><td colspan="2" style="padding: 10px; text-align: center; color: #888;">No se encontraron datos activos</td></tr>`;
+  }
+
+  // 5. RENDER HTML TABLE
+  popupElement_senderos.innerHTML = `
+    <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
+      Senderos
+    </h4>
+    <div style="max-height: 150px; overflow-y: auto;">
+      <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 14px;">
+        <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
+          <th style="padding: 6px; border: 1px solid #ddd;">Referencia</th>
+          <th style="padding: 6px; border: 1px solid #ddd; text-align: right;">Longitud (km.)</th>
+        </tr>
+        ${tableRowsHTML}
+      </table>
+    </div>
+  `;
+  
+  popupElement_senderos.style.display = 'block';
+}
+
+// 3. LISTEN TO INITIAL VISIBILITY TOGGLE
+senderos.on('change:visible', () => {
+  if (senderos.getVisible()) {
+    updatesenderosTable(); // Attempts to run immediately
+  } else {
+    popupElement_senderos.style.display = 'none'; // Hides instantly when unchecked
+  }
+});
+
+// 4. THE CRUCIAL FIX: If data arrives AFTER the user clicks, update the table instantly
+senderos1.getSource().on('featuresloadend', () => {
+  // Only update the table if the user currently wants to see the layer
+  if (senderos.getVisible()) {
+    updatesenderosTable();
+  }
+});
+
+
+
+
+
+
+
 /*
 // Para mostrar información al hacer click en edificaciones
 map.on('singleclick', function (evt) {
