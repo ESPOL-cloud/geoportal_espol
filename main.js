@@ -4507,6 +4507,143 @@ popupElement_pt.addEventListener('click', function(event) {
 
 
 
+
+
+
+// TABLA PARA BOSQUES
+const popupElement_bosques = document.createElement('div');
+popupElement_bosques.id = 'arriendo-map-control';
+popupElement_bosques.className = 'ol-unselectable ol-control'; 
+popupElement_bosques.style.position = 'absolute';
+popupElement_bosques.style.bottom = '10px';       
+popupElement_bosques.style.left = '20px';         
+popupElement_bosques.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+popupElement_bosques.style.border = '1px solid #ccc';
+popupElement_bosques.style.borderRadius = '4px';
+popupElement_bosques.style.padding = '12px';
+popupElement_bosques.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
+popupElement_bosques.style.maxWidth = '350px';
+popupElement_bosques.style.zIndex = '1000';
+popupElement_bosques.style.display = 'none';      
+
+const bosquesTableControl = new ol.control.Control({ element: popupElement_bosques });
+map.addControl(bosquesTableControl);
+
+// 2. SEPARATED FUNCTION: This builds and displays the table safely
+function updatebosquesTable() {
+  const source = bosques_polig.getSource();
+  const features = source.getFeatures(); 
+  
+  if (features.length === 0) {
+    popupElement_bosques.innerHTML = `<div style="font-size:12px; color:#666; padding:10px;">Cargando datos...</div>`;
+    popupElement_bosques.style.display = 'block';
+    return;
+  }
+
+  // 1. ACUMULATOR OBJECT: Group and sum everything by zone name
+  const agrupadoPorZona = {};
+  
+  features.forEach((feature, index) => {
+    const props = feature.getProperties(); 
+    const zonaOriginal = props.zona || 'N/A';
+
+    // Parse hectares safely into a number
+    const hectareasNum = parseFloat(props.hectareas) || 0;
+
+    // Ensure the feature has an ID for zooming capabilities
+    if (!feature.getId()) {
+      feature.setId('comodato-' + index);
+    }
+    const featureId = feature.getId();
+
+    // If the zone name doesn't exist in our dictionary yet, initialize it
+    if (!agrupadoPorZona[zonaOriginal]) {
+      agrupadoPorZona[zonaOriginal] = {
+        sumaHectareas: 0,
+        featureId: featureId // Stores the ID of the first feature found with this name
+      };
+    }
+
+    // Accumulate the hectares
+    agrupadoPorZona[zonaOriginal].sumaHectareas += hectareasNum;
+  });
+
+  // 2. GENERATE TABLE ROWS FROM THE ACCUMULATOR
+  let tableRowsHTML = '';
+  let granTotalHectareas = 0; // <-- TRACK TOTAL SUM
+  
+  Object.keys(agrupadoPorZona).forEach((nombreZona) => {
+    const datosZona = agrupadoPorZona[nombreZona];
+    
+    // Round to 2 decimals to prevent JS floating-point precision bugs (e.g., 4.000000002)
+    const totalHectareas = Number(datosZona.sumaHectareas.toFixed(2));
+    
+    // Add to grand total
+    granTotalHectareas += totalHectareas;
+
+    tableRowsHTML += `
+      <tr>
+        <td style="padding: 6px; border: 1px solid #ddd;">
+          <span data-id="${datosZona.featureId}" style="color: #141516; cursor: pointer;">
+            ${nombreZona}
+          </span>
+        </td>
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${totalHectareas}</td>
+      </tr>
+    `;
+  });
+
+  // 3. APPEND THE GRAND TOTAL ROW (Only if there are matching rows)
+  if (tableRowsHTML !== '') {
+    const totalFinalRedondeado = Number(granTotalHectareas.toFixed(2));
+    tableRowsHTML += `
+      <tr style="background-color: #f1f3f5; border-top: 2px solid #aaa;">
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707;">TOTAL GENERAL</td>
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707;">${totalFinalRedondeado}</td>
+      </tr>
+    `;
+  } else {
+    // FALLBACK MESSAGE
+    tableRowsHTML = `<tr><td colspan="2" style="padding: 10px; text-align: center; color: #888;">No se encontraron datos activos</td></tr>`;
+  }
+
+  // 4. RENDER HTML TABLE
+  popupElement_bosques.innerHTML = `
+    <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
+      Bosques
+    </h4>
+    <div style="max-height: 150px; overflow-y: auto;">
+      <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 14px;">
+        <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
+          <th style="padding: 6px; border: 1px solid #ddd;">Referencia</th>
+          <th style="padding: 6px; border: 1px solid #ddd;">Hectáreas</th>
+        </tr>
+        ${tableRowsHTML}
+      </table>
+    </div>
+  `;
+  
+  popupElement_bosques.style.display = 'block';
+}
+
+// 3. LISTEN TO INITIAL VISIBILITY TOGGLE
+bosques.on('change:visible', () => {
+  if (bosques.getVisible()) {
+    updatebosquesTable(); // Attempts to run immediately
+  } else {
+    popupElement_bosques.style.display = 'none'; // Hides instantly when unchecked
+  }
+});
+
+// 4. THE CRUCIAL FIX: If data arrives AFTER the user clicks, update the table instantly
+bosques_polig.getSource().on('featuresloadend', () => {
+  // Only update the table if the user currently wants to see the layer
+  if (bosques.getVisible()) {
+    updatebosquesTable();
+  }
+});
+
+
 /*
 // Para mostrar información al hacer click en edificaciones
 map.on('singleclick', function (evt) {
