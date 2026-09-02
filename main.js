@@ -1049,6 +1049,12 @@ const vias_sec_espol = new ol.layer.Vector({
 
 
 
+const lin_vias = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/lin_vias.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: viaStyle
+});
+
 
 /*
 var lindero = new ol.layer.Tile({
@@ -1077,7 +1083,7 @@ const infraestructura = new ol.layer.Group({
 
 const vias = new ol.layer.Group({
   title: 'Vías',
-  layers: [vias_sec_espol, vias_prin_espol, viasespol],
+  layers: [lin_vias, vias_sec_espol, vias_prin_espol, viasespol],
   fold: 'close'
 });
 
@@ -4662,6 +4668,160 @@ bosques1.getSource().on('featuresloadend', () => {
     updatebosquesTable();
   }
 });
+
+
+
+// TABLA PARA VIAS
+const popupElement_vias = document.createElement('div');
+popupElement_vias.id = 'arriendo-map-control';
+popupElement_vias.className = 'ol-unselectable ol-control'; 
+popupElement_vias.style.position = 'absolute';
+popupElement_vias.style.bottom = '10px';       
+popupElement_vias.style.left = '20px';         
+popupElement_vias.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+popupElement_vias.style.border = '1px solid #ccc';
+popupElement_vias.style.borderRadius = '4px';
+popupElement_vias.style.padding = '12px';
+popupElement_vias.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
+popupElement_vias.style.maxWidth = '350px';
+popupElement_vias.style.zIndex = '1000';
+popupElement_vias.style.display = 'none';      
+
+const viasTableControl = new ol.control.Control({ element: popupElement_vias });
+map.addControl(viasTableControl);
+
+// 2. SEPARATED FUNCTION: This builds and displays the table safely
+function updateviasTable() {
+  const source = lin_vias.getSource();
+  const features = source.getFeatures(); 
+  
+  if (features.length === 0) {
+    popupElement_vias.innerHTML = `<div style="font-size:12px; color:#666; padding:10px;">Cargando datos...</div>`;
+    popupElement_vias.style.display = 'block';
+    return;
+  }
+
+  // 1. ACUMULATOR OBJECT: Group and sum everything by zone name
+  const agrupadoPorZona = {};
+  
+  features.forEach((feature, index) => {
+    const props = feature.getProperties(); 
+    const zonaOriginal = props.via || 'N/A';
+
+    // Parse hectares safely into a number
+    const viasNum = parseFloat(props.longitud) || 0;
+
+    // Ensure the feature has an ID for zooming capabilities
+    if (!feature.getId()) {
+      feature.setId('comodato-' + index);
+    }
+    const featureId = feature.getId();
+
+    // If the zone name doesn't exist in our dictionary yet, initialize it
+    if (!agrupadoPorZona[zonaOriginal]) {
+      agrupadoPorZona[zonaOriginal] = {
+        sumaVias: 0,
+        featureId: featureId 
+      };
+    }
+
+    // Accumulate the hectares
+    agrupadoPorZona[zonaOriginal].sumaVias += viasNum;
+  });
+
+  // 2. DEFINE AND APPLY THE PRECISE LONG-TEXT ROW ORDER
+  const ordenDeseado = [
+    'PRINCIPAL', 
+    'SECUNDARIA'
+  ];
+  
+  const zonasOrdenadas = Object.keys(agrupadoPorZona).sort((a, b) => {
+    // Standardize text format (.trim and .toUpperCase) to secure a perfect match
+    const indexA = ordenDeseado.indexOf(a.trim().toUpperCase());
+    const indexB = ordenDeseado.indexOf(b.trim().toUpperCase());
+    
+    // If a zone name isn't found in your predefined list, send it to the bottom
+    const posA = indexA === -1 ? 999 : indexA;
+    const posB = indexB === -1 ? 999 : indexB;
+    
+    return posA - posB;
+  });
+
+  // 3. GENERATE TABLE ROWS FROM THE SORTED ARRAY
+  let tableRowsHTML = '';
+  let granTotalVias = 0; 
+  
+  zonasOrdenadas.forEach((nombreZona) => {
+    const datosZona = agrupadoPorZona[nombreZona];
+    
+    // Round to 2 decimals to prevent JS floating-point precision bugs
+    const totalVias = Number(datosZona.sumaVias.toFixed(2));
+    
+    // Add to grand total
+    granTotalVias += totalVias;
+
+    tableRowsHTML += `
+      <tr>
+        <td style="padding: 6px; border: 1px solid #ddd; line-height: 1.2;">
+          <span data-id="${datosZona.featureId}" style="color: #141516; cursor: pointer;">
+            ${nombreZona}
+          </span>
+        </td>
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; text-align: right;">${totalVias}</td>
+      </tr>
+    `;
+  });
+
+  // 4. APPEND THE GRAND TOTAL ROW
+  if (tableRowsHTML !== '') {
+    const totalFinalRedondeado = Number(granTotalVias.toFixed(2));
+    tableRowsHTML += `
+      <tr style="background-color: #f1f3f5; border-top: 2px solid #aaa;">
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707;">TOTAL</td>
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707; text-align: right;">${totalFinalRedondeado}</td>
+      </tr>
+    `;
+  } else {
+    tableRowsHTML = `<tr><td colspan="2" style="padding: 10px; text-align: center; color: #888;">No se encontraron datos activos</td></tr>`;
+  }
+
+  // 5. RENDER HTML TABLE
+  popupElement_vias.innerHTML = `
+    <h4 style="margin: 0 0 8px 0; color:#0064c8; font-size:14px; border-bottom: 1px solid #0064c8; padding-bottom: 4px;">
+      Vías
+    </h4>
+    <div style="max-height: 150px; overflow-y: auto;">
+      <table style="border-collapse: collapse; text-align: left; width: 100%; font-size: 14px;">
+        <tr style="background-color: #f8f9fa; border-bottom: 1px solid #aaa;">
+          <th style="padding: 6px; border: 1px solid #ddd;">Vía</th>
+          <th style="padding: 6px; border: 1px solid #ddd; text-align: right;">Longitud (km.)</th>
+        </tr>
+        ${tableRowsHTML}
+      </table>
+    </div>
+  `;
+  
+  popupElement_vias.style.display = 'block';
+}
+
+// 3. LISTEN TO INITIAL VISIBILITY TOGGLE
+vias.on('change:visible', () => {
+  if (vias.getVisible()) {
+    updateviasTable(); // Attempts to run immediately
+  } else {
+    popupElement_vias.style.display = 'none'; // Hides instantly when unchecked
+  }
+});
+
+// 4. THE CRUCIAL FIX: If data arrives AFTER the user clicks, update the table instantly
+lin_vias.getSource().on('featuresloadend', () => {
+  // Only update the table if the user currently wants to see the layer
+  if (vias.getVisible()) {
+    updateviasTable();
+  }
+});
+
+
 
 
 /*
