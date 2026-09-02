@@ -4619,7 +4619,7 @@ function updatebosquesTable() {
     const totalFinalRedondeado = Number(granTotalHectareas.toFixed(2));
     tableRowsHTML += `
       <tr style="background-color: #f1f3f5; border-top: 2px solid #aaa;">
-        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707;">TOTAL GENERAL</td>
+        <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707;">TOTAL</td>
         <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold; color: #070707; text-align: right;">${totalFinalRedondeado}</td>
       </tr>
     `;
