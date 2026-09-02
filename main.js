@@ -4531,7 +4531,7 @@ map.addControl(bosquesTableControl);
 
 // 2. SEPARATED FUNCTION: This builds and displays the table safely
 function updatebosquesTable() {
-  const source = bosques_polig.getSource();
+  const source = bosques1.getSource();
   const features = source.getFeatures(); 
   
   if (features.length === 0) {
@@ -4656,7 +4656,7 @@ bosques.on('change:visible', () => {
 });
 
 // 4. THE CRUCIAL FIX: If data arrives AFTER the user clicks, update the table instantly
-bosques_polig.getSource().on('featuresloadend', () => {
+bosques1.getSource().on('featuresloadend', () => {
   // Only update the table if the user currently wants to see the layer
   if (bosques.getVisible()) {
     updatebosquesTable();
