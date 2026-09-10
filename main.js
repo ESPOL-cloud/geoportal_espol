@@ -3817,6 +3817,10 @@ map.on('singleclick', function (evt) {
     htmlContent += `<tr><td><strong>NRO. PISOS</strong></td><td>${props.no_piso}</td></tr>`;
   }
 
+    if (props.año !== undefined && props.año !== null && props.año !== '') {
+    htmlContent += `<tr><td><strong>AÑO CONSTRUCCIÓN</strong></td><td>${props.año}</td></tr>`;
+  }
+
     if (props.area_ocup !== undefined && props.area_ocup !== null && props.area_ocup !== '') {
     htmlContent += `<tr><td><strong>ÁREA OCUPACIÓN (M2)</strong></td><td>${props.area_ocup}</td></tr>`;
   }
