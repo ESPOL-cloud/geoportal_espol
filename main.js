@@ -3797,22 +3797,36 @@ map.on('singleclick', function (evt) {
   } 
   
   // --- CASO 2: TU SEGUNDA CAPA (Reemplaza 'capa_dos' con tu variable real) ---
-  else if (typeof polig_comodato !== 'undefined' && clickedLayer === polig_comodato) {
+  else if (typeof comodatos !== 'undefined' && clickedLayer === comodatos) {
     htmlContent += 
-    '<tr><td><strong>Ref.</strong></td><td>'+ (props.referencia_inmueble || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.área_total_construcción || 'N/A') + '</td></tr>';
+    '<tr><td><strong>Ref.</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.area_const || 'N/A') + '</td></tr>';
   }
 
-  else if (typeof polig_arriendo !== 'undefined' && clickedLayer === polig_arriendo) {
+  else if (typeof arriendos !== 'undefined' && clickedLayer === arriendos) {
     htmlContent += 
-    '<tr><td><strong>Ref.</strong></td><td>'+ (props.referencia_inmueble || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.área_total_construcción || 'N/A') + '</td></tr>';
+    '<tr><td><strong>Ref.</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.area_const || 'N/A') + '</td></tr>';
   }
 
   else if (typeof poligonos !== 'undefined' && clickedLayer === poligonos) {
     htmlContent += 
-    '<tr><td><strong>Ref.</strong></td><td>'+ (props.referencia_inmueble || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.área_total_construcción || 'N/A') + '</td></tr>';
+    '<tr><td><strong>DESCRIPCIÓN</strong></td><td>'+ (props.referencia_inmueble || 'N/A') + '</td></tr>';
+
+    if (props.no_piso !== undefined && props.no_piso !== null && props.no_piso !== '') {
+    htmlContent += `<tr><td><strong>NRO. PISOS</strong></td><td>${props.no_piso}</td></tr>`;
+  }
+
+    if (props.area_ocup !== undefined && props.area_ocup !== null && props.area_ocup !== '') {
+    htmlContent += `<tr><td><strong>ÁREA OCUPACIÓN (M2)</strong></td><td>${props.area_ocup}</td></tr>`;
+  }
+
+    htmlContent += '<tr><td><strong>ÁREA CONSTRUCCIÓN (M2)</strong></td><td>'+ (props.área_total_construcción || 'N/A') + '</td></tr>'
+
+
+    if (props.altura !== undefined && props.altura !== null && props.altura !== '') {
+    htmlContent += `<tr><td><strong>ALTURA CONSTRUCCIÓN (M)</strong></td><td>${props.altura}</td></tr>`;
+  }
   }
 
   else if (typeof valvulas_aire !== 'undefined' && clickedLayer === valvulas_aire) {
