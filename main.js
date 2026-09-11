@@ -1184,6 +1184,9 @@ const zonasStyle1 = new ol.style.Style({
 
       ctx.restore();
     }
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(109, 100, 52, 0.01)'  
   })
 });
 
@@ -1191,13 +1194,19 @@ const zonasStyle2 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(19, 114, 32, 1)', 
     width: 6
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(19, 114, 32, 0.01)'  
   })
 });
 
 const zonasStyle3 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: 'rgb(87, 226, 106)', 
+    color: 'rgba(87, 226, 106, 1)', 
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(87, 226, 106, 0.01)'  
   })
 });
 
@@ -1205,6 +1214,9 @@ const zonasStyle4 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(26, 67, 128, 1)',   
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(26, 67, 128, 0.01)'  
   })
 });
 
@@ -1212,6 +1224,9 @@ const zonasStyle5 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(103, 196, 196, 1)', 
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(103, 196, 196, 0.01)'  
   })
 });
 
@@ -1219,34 +1234,49 @@ const zonasStyle6 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(15, 15, 15, 1)', 
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(15, 15, 15, 0.01)'  
   })
 });
 
 const zonasStyle7 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: 'rgb(236, 110, 26)', 
+    color: 'rgba(236, 110, 26, 1)', 
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(236, 110, 26, 0.01)'  
   })
 });
 
 const zonasStyle8 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: 'rgb(250, 235, 29)', 
+    color: 'rgba(250, 235, 29, 1)', 
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(250, 235, 29, 0.01)'  
   })
 });
 
 const zonasStyle9 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: 'rgb(81, 11, 173)', 
+    color: 'rgba(81, 11, 173, 1)', 
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(81, 11, 173, 0.01)'  
   })
 });
 
 const zonasStyle10 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: 'rgb(255, 38, 23)', 
+    color: 'rgba(255, 38, 23, 1)', 
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(255, 38, 23, 0.01)'  
   })
 });
 
@@ -1254,13 +1284,19 @@ const zonasStyle11 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(120, 127, 128, 1)', 
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(120, 127, 128, 0.01)'  
   })
 });
 
 const zonasStyle12 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
-    color: 'rgb(20, 63, 126)', 
+    color: 'rgba(20, 63, 126, 1)', 
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(20, 63, 126, 0.01)'  
   })
 });
 
@@ -1268,6 +1304,9 @@ const zonasStyle13 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(126, 185, 111, 1)', 
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(126, 185, 111, 0.01)'  
   })
 });
 
@@ -1275,6 +1314,9 @@ const zonasStyle14 = new ol.style.Style({
   stroke: new ol.style.Stroke({ 
     color: 'rgba(196, 64, 178, 1)', 
     width: 6 
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(196, 64, 178, 0.01)'  
   })
 });
 
@@ -3412,8 +3454,8 @@ const map = new ol.Map(
             puntos_arriendos,
             comodatos,
             puntos_comodatos,
-            zonas,
             zonas_puntos,
+            zonas,
             poligonos, // edificaciones
             puntos,
         ], 
@@ -3849,6 +3891,11 @@ map.on('singleclick', function (evt) {
     '<tr><td><strong>Diámetro</strong></td><td>'+ (props.DIAMETRO || 'N/A') + '</td></tr>' +
     '<tr><td><strong>Tipo Válvula</strong></td><td>'+ (props.TIPO_VALV || 'N/A') + '</td></tr>' +
     '<tr><td><strong>Marca</strong></td><td>'+ (props.MARCA || 'N/A') + '</td></tr>';
+  }
+
+  else if (typeof zonas !== 'undefined' && clickedLayer === zonas) {
+    htmlContent += 
+    '<tr><td><strong>'+ (props.descripción || 'N/A') + '</strong></td></tr>'
   }
 
 
