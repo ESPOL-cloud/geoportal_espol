@@ -3455,18 +3455,18 @@ const lagunas = new ol.layer.Vector({
     url: './capas/lagunas.geojson', 
     format: new ol.format.GeoJSON() 
   }),
-  title: "<b>Lagunas de oxidación</b>",
+  title: '<b>Lagunas de oxidación</b>',
   visible: false,
   style: function(feature, resolution) {
-    const attributeValue = feature.get('referencia'); 
+    const attributeValue = feature.get('Layer'); 
     
-    if (attributeValue && attributeValue.toLowerCase().includes('banco')) {
+    if (attributeValue && attributeValue.toLowerCase().includes('')) {
 
       const stylesToRender = [lagunasStyle];
 
       // 2. Only generate and push the labelStyle if resolution is higher than 0.8
-      if (resolution < 1) {
-        const labelText = feature.get('referencia') || 'Servicios'; 
+      if (resolution < 1.6) {
+        const labelText = feature.get('Layer') || ''; 
 
         const labelStyle = new ol.style.Style({
           text: new ol.style.Text({
