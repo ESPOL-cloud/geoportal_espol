@@ -45,9 +45,16 @@ const lindero_vectorStyle = new ol.style.Style({
 });
 
 // 6. Define the final layer and attach it to your main map instance
+// Como source se utiliza el geojson lindero por ahora (para añadir el lindero de tanques bajos)
+// No se usa el lindero_localVectorSource creado
 const lindero = new ol.layer.Vector({
-  source: lindero_localVectorSource,
-  style: lindero_vectorStyle
+  source: /*lindero_localVectorSource*/ new ol.source.Vector({ url: './capas/lindero.geojson', format: new ol.format.GeoJSON() }),
+  style: /*lindero_vectorStyle*/ function(feature) {
+    const attributeValue = feature.get('Name'); 
+    if (attributeValue && attributeValue.toLowerCase().includes('lindero')) {  // debe estar en minúsculas
+        return lindero_vectorStyle; 
+  }
+  }
 });
 
 
@@ -815,6 +822,9 @@ const arriendos = new ol.layer.Vector({
       return null; // Oculta el polígono si el campo está vacío o es nulo
     }
 
+    return poligonosStyle12
+
+    /*
     if (zona == 1) {
       return poligonosStyle1; 
     }
@@ -857,6 +867,8 @@ const arriendos = new ol.layer.Vector({
     else if (zona == 14) {
       return poligonosStyle14; 
     }
+    */
+
 
     }
 });
@@ -933,6 +945,9 @@ const comodatos = new ol.layer.Vector({
       return null; // Oculta el polígono si el campo está vacío o es nulo
     }
 
+    return poligonosStyle8
+
+    /*
     if (zona == 1) {
       return poligonosStyle1; 
     }
@@ -975,6 +990,10 @@ const comodatos = new ol.layer.Vector({
     else if (zona == 14) {
       return poligonosStyle14; 
     }
+    */
+
+
+
 
     }
 });
@@ -3419,6 +3438,75 @@ const sondeo = new ol.layer.Vector({
 });
 
 
+
+// LAGUNAS DE OXIDACION
+const lagunasStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(11, 47, 207)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const lagunas = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/lagunas.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "<b>Lagunas de oxidación</b>",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+    if (attributeValue && attributeValue.toLowerCase().includes('banco')) {
+
+      const stylesToRender = [lagunasStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || 'Servicios'; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+
+    else {
+      return null; 
+    }
+  }
+});
+
+
+
+
+
+
 const map = new ol.Map(
     {   
         target: "map",
@@ -3431,6 +3519,7 @@ const map = new ol.Map(
             infraestructura,
             curvas_nivel,
             curvas_texto,
+            //lagunas,
             valvulas_aapp,
             //camaras,
             valvulas_aire,
@@ -3841,14 +3930,18 @@ map.on('singleclick', function (evt) {
   // --- CASO 2: TU SEGUNDA CAPA (Reemplaza 'capa_dos' con tu variable real) ---
   else if (typeof comodatos !== 'undefined' && clickedLayer === comodatos) {
     htmlContent += 
-    '<tr><td><strong>Ref.</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.area_const || 'N/A') + '</td></tr>';
+    '<tr><td><strong>Referencia</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>A. Terreno (m2)</strong></td><td>'+ (props.area_terr) + '</td></tr>' +
+    '<tr><td><strong>A. Construcción (m2)</strong></td><td>'+ (props.area_const) + '</td></tr>' +
+    '<tr><td><strong>Fecha Vencimiento</strong></td><td>'+ (props.fecha_venc || 'N/A') + '</td></tr>';
   }
 
   else if (typeof arriendos !== 'undefined' && clickedLayer === arriendos) {
     htmlContent += 
-    '<tr><td><strong>Ref.</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.area_const || 'N/A') + '</td></tr>';
+    '<tr><td><strong>Referencia</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>A. Terreno (m2)</strong></td><td>'+ (props.area_terr) + '</td></tr>' +
+    '<tr><td><strong>A. Construcción (m2)</strong></td><td>'+ (props.area_const) + '</td></tr>' +
+    '<tr><td><strong>Fecha Vencimiento</strong></td><td>'+ (props.fecha_venc || 'N/A') + '</td></tr>';
   }
 
   else if (typeof poligonos !== 'undefined' && clickedLayer === poligonos) {
