@@ -3519,7 +3519,7 @@ const map = new ol.Map(
             infraestructura,
             curvas_nivel,
             curvas_texto,
-            //lagunas,
+            lagunas,
             valvulas_aapp,
             //camaras,
             valvulas_aire,
