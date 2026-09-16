@@ -3945,8 +3945,14 @@ map.on('singleclick', function (evt) {
   }
 
   else if (typeof poligonos !== 'undefined' && clickedLayer === poligonos) {
+
+    htmlContent += '<tr><td><strong>COD. ANTERIOR</strong></td><td>'+ (props.código_anterior || 'N/A') + '</td></tr>'
+
+    htmlContent += '<tr><td><strong>COD. ACTUAL</strong></td><td>'+ (props.código_actual || 'N/A') + '</td></tr>'
+
     htmlContent += 
     '<tr><td><strong>DESCRIPCIÓN</strong></td><td>'+ (props.referencia_inmueble || 'N/A') + '</td></tr>';
+
 
     if (props.no_piso !== undefined && props.no_piso !== null && props.no_piso !== '') {
     htmlContent += `<tr><td><strong>NRO. PISOS</strong></td><td>${props.no_piso}</td></tr>`;
