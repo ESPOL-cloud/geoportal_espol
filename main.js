@@ -3994,7 +3994,8 @@ map.on('singleclick', function (evt) {
 
   else if (typeof zonas !== 'undefined' && clickedLayer === zonas) {
     htmlContent += 
-    '<tr><td><strong>'+ (props.descripción || 'N/A') + '</strong></td></tr>'
+    '<tr><td style="text-align: center;"><strong>'+ (props.name || 'N/A') + '</strong><br/>' +
+    '<strong>'+ (props.descripción || 'N/A') + '</strong></td></tr>'
   }
 
 
