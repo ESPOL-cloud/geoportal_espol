@@ -4027,14 +4027,23 @@ map.on('singleclick', function (evt) {
 
     htmlContent += 
     '<tr><td><strong>COD. ACTUAL</strong></td><td>'+ (props.cod_act || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>OPERADOR</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>A. TERRENO (M2)</strong></td><td>'+ (area_terr) + '</td></tr>' +
-    '<tr><td><strong>A. CONSTRUCCIÓN (M2)</strong></td><td>'+ (area_const) + '</td></tr>' +
-    '<tr><td><strong>USO</strong></td><td>'+ (props.uso || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>FECHA ESCRITURA</strong></td><td>'+ (props.fecha_escr || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>PLAZO</strong></td><td>'+ (props.plazo || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>FECHA VENCIMIENTO</strong></td><td>'+ (props.fech_venc || 'N/A') + '</td></tr>';
+    '<tr><td><strong>OPERADOR</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>';
+
+    if (props.nro_edif !== undefined && props.nro_edif !== null && props.nro_edif !== '') {
+      htmlContent += `<tr><td><strong>NRO. EDIFICACIONES</strong></td><td>${props.nro_edif}</td></tr>`;
+    }
+
+    htmlContent += 
+      '<tr><td><strong>A. TERRENO (M2)</strong></td><td>'+ (area_terr) + '</td></tr>' +
+      '<tr><td><strong>A. CONSTRUCCIÓN (M2)</strong></td><td>'+ (area_const) + '</td></tr>' +
+      '<tr><td><strong>USO</strong></td><td>'+ (props.uso || 'N/A') + '</td></tr>' +
+      '<tr><td><strong>FECHA ESCRITURA</strong></td><td>'+ (props.fecha_escr || 'N/A') + '</td></tr>' +
+      '<tr><td><strong>PLAZO</strong></td><td>'+ (props.plazo || 'N/A') + '</td></tr>' +
+      '<tr><td><strong>FECHA VENCIMIENTO</strong></td><td>'+ (props.fech_venc || 'N/A') + '</td></tr>';
   }
+
+
+
 
   else if (typeof poligonos !== 'undefined' && clickedLayer === poligonos) {
     // CODIGO PARA REEMPLAZAR PUNTOS POR COMAS
