@@ -1025,18 +1025,33 @@ comodatos.on('change:visible', () => {
 */
 
 const viaStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(11, 12, 12, 0.9)' 
+  }),
   stroke: new ol.style.Stroke({ 
-    color: '#0e0d0d', 
+    color: '#17191a', 
     width: 2 
   })
 });
 
 const via_secStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(47, 49, 51, 0.9)' 
+  }),
   stroke: new ol.style.Stroke({ 
-    color: '#39bfc9', 
+    color: '#17191a', 
     width: 2 
   })
 });
+
+const via_mitadStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({ 
+    color: '#e7f2f8', 
+    width: 0.5,
+    //lineDash: [20, 20] // [dash length, gap length] in pixels
+  })
+});
+
 
 
 const viasespol = new ol.layer.Vector({
@@ -1053,14 +1068,14 @@ const viasespol = new ol.layer.Vector({
 });
 
 const vias_prin_espol = new ol.layer.Vector({
-  source: new ol.source.Vector({ url: './capas/lin_prin_espol.geojson', format: new ol.format.GeoJSON() }),
+  source: new ol.source.Vector({ url: './capas/vias_principales.geojson', format: new ol.format.GeoJSON() }),
   title: 'Vías Principales',
   visible: false,
   style: viaStyle
 });
 
 const vias_sec_espol = new ol.layer.Vector({
-  source: new ol.source.Vector({ url: './capas/lin_sec_espol.geojson', format: new ol.format.GeoJSON() }),
+  source: new ol.source.Vector({ url: './capas/vias_secundarias.geojson', format: new ol.format.GeoJSON() }),
   title: 'Vías Secundarias',
   visible: false,
   style: via_secStyle
@@ -1071,7 +1086,20 @@ const vias_sec_espol = new ol.layer.Vector({
 const lin_vias = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/lin_vias.geojson', format: new ol.format.GeoJSON() }),
   visible: false,
-  style: viaStyle
+  style: via_mitadStyle
+});
+
+
+const vias_mitad_principales = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/vias_mitad_principales.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: via_mitadStyle
+});
+
+const vias_mitad_secundarias = new ol.layer.Vector({
+  source: new ol.source.Vector({ url: './capas/vias_mitad_secundarias.geojson', format: new ol.format.GeoJSON() }),
+  visible: false,
+  style: via_mitadStyle
 });
 
 
@@ -1102,10 +1130,19 @@ const infraestructura = new ol.layer.Group({
 
 const vias = new ol.layer.Group({
   title: 'Vías',
-  layers: [lin_vias, vias_sec_espol, vias_prin_espol, viasespol],
+  layers: [vias_sec_espol, vias_prin_espol, vias_mitad_secundarias, vias_mitad_principales, lin_vias],
   fold: 'close'
 });
 
+vias_prin_espol.on('change:visible', () => {
+  const isVisible = vias_prin_espol.getVisible();
+  vias_mitad_principales.setVisible(isVisible);
+});
+
+vias_sec_espol.on('change:visible', () => {
+  const isVisible = vias_sec_espol.getVisible();
+  vias_mitad_secundarias.setVisible(isVisible);
+});
 
 
 /*
@@ -2648,16 +2685,12 @@ const infraestructura_servicios_biblioStyle = new ol.style.Style({
 
 
 const acceso_peatonalStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(90, 90, 88, 0.6)'  
+  }),
   stroke: new ol.style.Stroke({ 
-    color: '#0832a7', 
-    width: 3
-  })
-});
-
-const acceso_vehicularStyle = new ol.style.Style({
-  stroke: new ol.style.Stroke({ 
-    color: '#f8f532', 
-    width: 3
+    color: '#17191a', 
+    width: 2 
   })
 });
 
@@ -3266,7 +3299,7 @@ const acceso_peatonal = new ol.layer.Vector({
   }),
   title: "Acceso peatonal",
   visible: false,
-  style: function(feature) {
+  style: acceso_peatonalStyle  /*function(feature) {
     const attributeValue = feature.get('acceso'); 
 
     if (attributeValue && attributeValue.toLowerCase().includes('peatonal')) {
@@ -3274,7 +3307,7 @@ const acceso_peatonal = new ol.layer.Vector({
     } else {
       return null; 
     }
-    }
+    }*/
 });
 
 const acceso_vehicular = new ol.layer.Vector({
@@ -3927,24 +3960,121 @@ map.on('singleclick', function (evt) {
     '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.área_total_construcción || 'N/A') + '</td></tr>';
   } 
   
+
   // --- CASO 2: TU SEGUNDA CAPA (Reemplaza 'capa_dos' con tu variable real) ---
   else if (typeof comodatos !== 'undefined' && clickedLayer === comodatos) {
+    // CODIGO PARA REEMPLAZAR PUNTOS POR COMAS
+    var rawArea = props.area_const;
+    var area_const = 'N/A';
+    
+    if (rawArea !== undefined && rawArea !== null) {
+      // If it is a number (e.g. 1500.45), convert dot to comma. Otherwise, leave as text.
+      area_const = typeof rawArea === 'number' 
+        ? rawArea.toLocaleString('de-DE') 
+        : rawArea;
+    }
+
+
+
+    // Helper variable to format the area property safely
+    var rawArea_terr = props.area_terr;
+    var area_terr = 'N/A';
+    
+    if (rawArea_terr !== undefined && rawArea_terr !== null) {
+      // If it is a number (e.g. 1500.45), convert dot to comma. Otherwise, leave as text.
+      area_terr = typeof rawArea_terr === 'number' 
+        ? rawArea_terr.toLocaleString('de-DE') 
+        : rawArea_terr;
+    }
+    
+    
     htmlContent += 
-    '<tr><td><strong>Referencia</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>A. Terreno (m2)</strong></td><td>'+ (props.area_terr) + '</td></tr>' +
-    '<tr><td><strong>A. Construcción (m2)</strong></td><td>'+ (props.area_const) + '</td></tr>' +
-    '<tr><td><strong>Fecha Vencimiento</strong></td><td>'+ (props.fecha_venc || 'N/A') + '</td></tr>';
+    '<tr><td><strong>COD. ACTUAL</strong></td><td>'+ (props.cod_act || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>OPERADOR</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>A. TERRENO (M2)</strong></td><td>'+ (area_terr) + '</td></tr>' +
+    '<tr><td><strong>A. CONSTRUCCIÓN (M2)</strong></td><td>'+ (area_const) + '</td></tr>' +
+    '<tr><td><strong>USO</strong></td><td>'+ (props.uso || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>FECHA ESCRITURA</strong></td><td>'+ (props.fecha_escr || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>PLAZO</strong></td><td>'+ (props.plazo || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>FECHA VENCIMIENTO</strong></td><td>'+ (props.fech_venc || 'N/A') + '</td></tr>';
   }
 
+
   else if (typeof arriendos !== 'undefined' && clickedLayer === arriendos) {
+    // CODIGO PARA REEMPLAZAR PUNTOS POR COMAS
+    var rawArea = props.area_const;
+    var area_const = 'N/A';
+    
+    if (rawArea !== undefined && rawArea !== null) {
+      // If it is a number (e.g. 1500.45), convert dot to comma. Otherwise, leave as text.
+      area_const = typeof rawArea === 'number' 
+        ? rawArea.toLocaleString('de-DE') 
+        : rawArea;
+    }
+
+
+
+    // Helper variable to format the area property safely
+    var rawArea_terr = props.area_terr;
+    var area_terr = 'N/A';
+    
+    if (rawArea_terr !== undefined && rawArea_terr !== null) {
+      // If it is a number (e.g. 1500.45), convert dot to comma. Otherwise, leave as text.
+      area_terr = typeof rawArea_terr === 'number' 
+        ? rawArea_terr.toLocaleString('de-DE') 
+        : rawArea_terr;
+    }
+
     htmlContent += 
-    '<tr><td><strong>Referencia</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>A. Terreno (m2)</strong></td><td>'+ (props.area_terr) + '</td></tr>' +
-    '<tr><td><strong>A. Construcción (m2)</strong></td><td>'+ (props.area_const) + '</td></tr>' +
-    '<tr><td><strong>Fecha Vencimiento</strong></td><td>'+ (props.fecha_venc || 'N/A') + '</td></tr>';
+    '<tr><td><strong>COD. ACTUAL</strong></td><td>'+ (props.cod_act || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>OPERADOR</strong></td><td>'+ (props.ref || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>A. TERRENO (M2)</strong></td><td>'+ (area_terr) + '</td></tr>' +
+    '<tr><td><strong>A. CONSTRUCCIÓN (M2)</strong></td><td>'+ (area_const) + '</td></tr>' +
+    '<tr><td><strong>USO</strong></td><td>'+ (props.uso || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>FECHA ESCRITURA</strong></td><td>'+ (props.fecha_escr || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>PLAZO</strong></td><td>'+ (props.plazo || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>FECHA VENCIMIENTO</strong></td><td>'+ (props.fech_venc || 'N/A') + '</td></tr>';
   }
 
   else if (typeof poligonos !== 'undefined' && clickedLayer === poligonos) {
+    // CODIGO PARA REEMPLAZAR PUNTOS POR COMAS
+    // Helper variable to format the area property safely
+    var rawArea = props.área_total_construcción;
+    var area_total_construccion = 'N/A';
+    
+    if (rawArea !== undefined && rawArea !== null) {
+      // If it is a number (e.g. 1500.45), convert dot to comma. Otherwise, leave as text.
+      area_total_construccion = typeof rawArea === 'number' 
+        ? rawArea.toLocaleString('de-DE') 
+        : rawArea;
+    }
+
+
+
+    // Helper variable to format the area property safely
+    var rawArea_ocup = props.area_ocup;
+    var area_ocup = 'N/A';
+    
+    if (rawArea_ocup !== undefined && rawArea_ocup !== null) {
+      // If it is a number (e.g. 1500.45), convert dot to comma. Otherwise, leave as text.
+      area_ocup = typeof rawArea_ocup === 'number' 
+        ? rawArea_ocup.toLocaleString('de-DE') 
+        : rawArea_ocup;
+    }
+
+
+    // Helper variable to format the area property safely
+    var rawAltura = props.altura;
+    var altura = 'N/A';
+    
+    if (rawAltura !== undefined && rawAltura !== null) {
+      // If it is a number (e.g. 1500.45), convert dot to comma. Otherwise, leave as text.
+      altura = typeof rawAltura === 'number' 
+        ? rawAltura.toLocaleString('de-DE') 
+        : rawAltura;
+    }
+
+
 
     htmlContent += '<tr><td><strong>COD. ANTERIOR</strong></td><td>'+ (props.código_anterior || 'N/A') + '</td></tr>'
 
@@ -3963,14 +4093,13 @@ map.on('singleclick', function (evt) {
   }
 
     if (props.area_ocup !== undefined && props.area_ocup !== null && props.area_ocup !== '') {
-    htmlContent += `<tr><td><strong>ÁREA OCUPACIÓN (M2)</strong></td><td>${props.area_ocup}</td></tr>`;
+    htmlContent += `<tr><td><strong>ÁREA OCUPACIÓN (M2)</strong></td><td>${area_ocup}</td></tr>`;
   }
 
-    htmlContent += '<tr><td><strong>ÁREA CONSTRUCCIÓN (M2)</strong></td><td>'+ (props.área_total_construcción || 'N/A') + '</td></tr>'
-
+    htmlContent += '<tr><td><strong>ÁREA CONSTRUCCIÓN (M2)</strong></td><td>'+ area_total_construccion /*(props.área_total_construcción || 'N/A')*/ + '</td></tr>'
 
     if (props.altura !== undefined && props.altura !== null && props.altura !== '') {
-    htmlContent += `<tr><td><strong>ALTURA CONSTRUCCIÓN (M)</strong></td><td>${props.altura}</td></tr>`;
+    htmlContent += `<tr><td><strong>ALTURA CONSTRUCCIÓN (M)</strong></td><td>${altura}</td></tr>`;
   }
   }
 
