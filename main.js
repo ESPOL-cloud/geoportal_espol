@@ -1026,7 +1026,7 @@ comodatos.on('change:visible', () => {
 
 const viaStyle = new ol.style.Style({
   fill: new ol.style.Fill({
-    color: 'rgba(11, 12, 12, 0.9)' 
+    color: 'rgba(10, 10, 10, 0.9)' 
   }),
   stroke: new ol.style.Stroke({ 
     color: '#17191a', 
