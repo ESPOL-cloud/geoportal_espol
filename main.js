@@ -2701,6 +2701,45 @@ const acceso_peatonalStyle = new ol.style.Style({
   })
 });
 
+const infraestructura_capillaStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(63, 249, 255, 0.6)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const infraestructura_tanqueStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(33, 57, 196, 0.6)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const infraestructura_garitaStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(56, 255, 56, 0.6)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const infraestructura_residenciaStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(29, 194, 153, 0.6)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
 
 
 const infraestructura_auditorio = new ol.layer.Vector({
@@ -3594,6 +3633,222 @@ const acceso_vehicular = new ol.layer.Vector({
     }
 });
 
+// CAPILLA ECUMÉNICA
+const infraestructura_capilla = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Capilla Ecuménica",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+
+    if (attributeValue && attributeValue.toLowerCase().includes('capilla ecuménica')) {
+
+      const stylesToRender = [infraestructura_capillaStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+
+
+    
+    
+    else {
+      return null; 
+    }
+  }
+});
+
+
+// TANQUE ELEVADO
+const infraestructura_tanque = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Tanque elevado",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+
+    if (attributeValue && attributeValue.toLowerCase().includes('tanque elevado')) {
+
+      const stylesToRender = [infraestructura_tanqueStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+    else {
+      return null; 
+    }
+  }
+});
+
+// GARITAS
+const infraestructura_garitas = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Garitas",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('zonas'); 
+    
+
+    if (attributeValue && attributeValue.toLowerCase().includes('garita')) {
+
+      const stylesToRender = [infraestructura_garitaStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+    else {
+      return null; 
+    }
+  }
+});
+
+// RESIDENCIAS UNIVERSITARIAS
+const infraestructura_residencias = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Residencias Universitarias",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('zonas'); 
+    
+
+    if (attributeValue && attributeValue.toLowerCase().includes('residencia')) {
+
+      const stylesToRender = [infraestructura_residenciaStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+    else {
+      return null; 
+    }
+  }
+});
 
 const infraestructura_areas_deportivas = new ol.layer.Group({
   title: 'Áreas Deportivas',
@@ -3604,8 +3859,8 @@ const infraestructura_areas_deportivas = new ol.layer.Group({
 
 const infraestructura = new ol.layer.Group({
   title: 'Infraestructura existente',
-  layers: [infraestructura_puentes, acceso_peatonal, /*infraestructura_servicios*/
-    infraestructura_med, infraestructura_biblio, infraestructura_bar, infraestructura_banco, infraestructura_areas_deportivas, infraestructura_auditorio, /*infraestructura_polig*/],
+  layers: [infraestructura_tanque, infraestructura_residencias, infraestructura_garitas, infraestructura_puentes, acceso_peatonal, /*infraestructura_servicios*/
+    infraestructura_med, infraestructura_capilla, infraestructura_biblio, infraestructura_bar, infraestructura_banco, infraestructura_areas_deportivas, infraestructura_auditorio, /*infraestructura_polig*/],
   fold: 'close',
 });
 
