@@ -1034,6 +1034,7 @@ const viaStyle = new ol.style.Style({
   })
 });
 
+
 const via_secStyle = new ol.style.Style({
   fill: new ol.style.Fill({
     color: 'rgba(47, 49, 51, 0.9)' 
@@ -1620,7 +1621,7 @@ const cicloviaStyle2 = new ol.style.Style({
 
 const ciclovia_existente = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/ciclovia_ex.geojson', format: new ol.format.GeoJSON() }),
-  title: '<b>Ciclovía existente</b>',
+  title: 'Ciclovía existente',
   visible: false,
   style: cicloviaStyle
 });
@@ -1628,11 +1629,17 @@ const ciclovia_existente = new ol.layer.Vector({
 // ciclovia_proy.geojson es la ciclovia continua, no por tramos
 const ciclovia_proyectada = new ol.layer.Vector({
   source: new ol.source.Vector({ url: './capas/ciclovia_proy_tramos.geojson', format: new ol.format.GeoJSON() }),
-  title: '<b>Ciclovía proyectada</b>',
+  title: 'Ciclovía proyectada',
   visible: false,
   style: cicloviaStyle2
 });
 
+
+const ciclovia = new ol.layer.Group({
+  title: 'Ciclovía',
+  layers: [ciclovia_proyectada, ciclovia_existente],
+  fold: 'close',
+});
 
 
 
@@ -2746,6 +2753,8 @@ const infraestructura_auditorio = new ol.layer.Vector({
   }
 });
 
+// INFRAESTRUCTURA DEPORTES INCLUYE TODAS LAS ÁREAS DEPORTIVAS
+/*
 const infraestructura_deportes = new ol.layer.Vector({
   source: new ol.source.Vector({ 
     url: './capas/infraestructura.geojson', 
@@ -2795,6 +2804,263 @@ const infraestructura_deportes = new ol.layer.Vector({
     }
   }
 });
+*/
+
+const infraestructura_deportes_canchas = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Canchas deportivas",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+    if (attributeValue && attributeValue.toLowerCase().includes('cancha')) {
+
+      const stylesToRender = [infraestructura_deportesStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } else {
+      return null; 
+    }
+  }
+});
+
+const infraestructura_deportes_coliseo = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Coliseos",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+    if (attributeValue && attributeValue.toLowerCase().includes('coliseo')) {
+
+      const stylesToRender = [infraestructura_deportesStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } else {
+      return null; 
+    }
+  }
+});
+
+
+const infraestructura_deportes_estadio = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Estadio",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+    if (attributeValue && attributeValue.toLowerCase().includes('estadio')) {
+
+      const stylesToRender = [infraestructura_deportesStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } else {
+      return null; 
+    }
+  }
+});
+
+
+const infraestructura_deportes_gimnasio = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Gimnasio",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+    if (attributeValue && attributeValue.toLowerCase().includes('gimnasio')) {
+
+      const stylesToRender = [infraestructura_deportesStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } else {
+      return null; 
+    }
+  }
+});
+
+
+const infraestructura_deportes_piscina = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/infraestructura.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Piscina",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('referencia'); 
+    
+    if (attributeValue && attributeValue.toLowerCase().includes('piscina')) {
+
+      const stylesToRender = [infraestructura_deportesStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1) {
+        const labelText = feature.get('referencia') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point'
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } else {
+      return null; 
+    }
+  }
+});
+
+
+
 
 /*
 const infraestructura_servicios = new ol.layer.Vector({
@@ -3136,7 +3402,7 @@ const infraestructura_med = new ol.layer.Vector({
     url: './capas/infraestructura.geojson', 
     format: new ol.format.GeoJSON() 
   }),
-  title: "Dispensario Médico",
+  title: "Centro Médico",
   visible: false,
   style: function(feature, resolution) {
     const attributeValue = feature.get('referencia'); 
@@ -3329,10 +3595,17 @@ const acceso_vehicular = new ol.layer.Vector({
 });
 
 
+const infraestructura_areas_deportivas = new ol.layer.Group({
+  title: 'Áreas Deportivas',
+  layers: [infraestructura_deportes_piscina, infraestructura_deportes_gimnasio, infraestructura_deportes_estadio, infraestructura_deportes_coliseo, infraestructura_deportes_canchas],
+  fold: 'close',
+});
+
+
 const infraestructura = new ol.layer.Group({
   title: 'Infraestructura existente',
   layers: [infraestructura_puentes, acceso_peatonal, /*infraestructura_servicios*/
-    infraestructura_med, infraestructura_biblio, infraestructura_bar, infraestructura_banco, infraestructura_deportes, infraestructura_auditorio, /*infraestructura_polig*/],
+    infraestructura_med, infraestructura_biblio, infraestructura_bar, infraestructura_banco, infraestructura_areas_deportivas, infraestructura_auditorio, /*infraestructura_polig*/],
   fold: 'close',
 });
 
@@ -3567,8 +3840,7 @@ const map = new ol.Map(
             senderos,
             bosques_contorno,
             bosques,
-            ciclovia_proyectada,
-            ciclovia_existente,
+            ciclovia,
             parqueos,
             parqueos_texto,
             vias,
@@ -3995,7 +4267,7 @@ map.on('singleclick', function (evt) {
     '<tr><td><strong>A. CONSTRUCCIÓN (M2)</strong></td><td>'+ (area_const) + '</td></tr>' +
     '<tr><td><strong>USO</strong></td><td>'+ (props.uso || 'N/A') + '</td></tr>' +
     '<tr><td><strong>FECHA ESCRITURA</strong></td><td>'+ (props.fecha_escr || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>PLAZO</strong></td><td>'+ (props.plazo || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>PLAZO (AÑOS)</strong></td><td>'+ (props.plazo || 'N/A') + '</td></tr>' +
     '<tr><td><strong>FECHA VENCIMIENTO</strong></td><td>'+ (props.fech_venc || 'N/A') + '</td></tr>';
   }
 
@@ -4038,7 +4310,7 @@ map.on('singleclick', function (evt) {
       '<tr><td><strong>A. CONSTRUCCIÓN (M2)</strong></td><td>'+ (area_const) + '</td></tr>' +
       '<tr><td><strong>USO</strong></td><td>'+ (props.uso || 'N/A') + '</td></tr>' +
       '<tr><td><strong>FECHA ESCRITURA</strong></td><td>'+ (props.fecha_escr || 'N/A') + '</td></tr>' +
-      '<tr><td><strong>PLAZO</strong></td><td>'+ (props.plazo || 'N/A') + '</td></tr>' +
+      '<tr><td><strong>PLAZO (AÑOS)</strong></td><td>'+ (props.plazo || 'N/A') + '</td></tr>' +
       '<tr><td><strong>FECHA VENCIMIENTO</strong></td><td>'+ (props.fech_venc || 'N/A') + '</td></tr>';
   }
 
@@ -4135,6 +4407,33 @@ map.on('singleclick', function (evt) {
     '<tr><td style="text-align: center;"><strong>'+ (props.name || 'N/A') + '</strong><br/>' +
     '<strong>'+ (props.descripción || 'N/A') + '</strong></td></tr>'
   }
+
+
+  else if (typeof sondeo !== 'undefined' && clickedLayer === sondeo) {
+    // CODIGO PARA REEMPLAZAR PUNTOS POR COMAS
+    // Helper variable to format the area property safely
+    var rawProf = props.prof;
+    var prof = 'N/A';
+    
+    if (rawProf !== undefined && rawProf !== null) {
+      // If it is a number (e.g. 1500.45), convert dot to comma. Otherwise, leave as text.
+      prof = typeof rawProf === 'number' 
+        ? rawProf.toLocaleString('de-DE') 
+        : rawProf;
+    }
+
+
+    htmlContent += '<tr><td><strong>AÑO SONDEO</strong></td><td>'+ (props.ano_sondeo || 'N/A') + '</td></tr>'
+
+    if (props.prof !== undefined && props.prof!== null && props.prof !== '') {
+    htmlContent += `<tr><td><strong>PROFUNDIDAD (M)</strong></td><td>${prof}</td></tr>`;
+  }
+
+    if (props.ensayo !== undefined && props.ensayo !== null && props.ensayo !== '') {
+    htmlContent += `<tr><td><strong>TIPO ENSAYO</strong></td><td>${props.ensayo}</td></tr>`;
+  }
+  }
+
 
 
   // --- CASO 3: CUALQUIER OTRA CAPA (Automatizada para que nunca falle) ---

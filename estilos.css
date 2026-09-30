@@ -19,8 +19,6 @@
     left: -1em; /* Colocar en lado izquierda */
 }
 
-
-
 /* Estilo para la tabla contenedor */
 .popup-table {
   width: 100%;
@@ -81,11 +79,15 @@
 }
 /* Para subgrupos  */
 .layer-switcher li.group li.group > label {
-  padding-left: 45px !important; 
-  font-weight: bold !important; 
+  padding-left: 40px !important; 
+  font-weight: normal !important; 
 }
-
-
+/* Para layers 
+.layer-switcher li.group li.group li:not(.group) > label {
+  padding-left: 40px !important; // Ajusta este número para cambiar el espacio del checkbox al texto
+  font-weight: normal !important; // Asegura que no estén en negrita 
+}
+*/
 
 /* Evita que al hacer click en los labels se observen los layers  */
 .layer-switcher label {
