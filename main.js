@@ -1690,7 +1690,7 @@ const bosquesStyle2 = new ol.style.Style({
   })
 });
 
-const bosquesColor3 = 'rgba(110, 209, 115, 0.8)'
+const bosquesColor3 = 'rgba(26, 235, 7, 0.8)'
 const bosquesStyle3 = new ol.style.Style({
   fill: new ol.style.Fill({ 
     color: bosquesColor3, 
