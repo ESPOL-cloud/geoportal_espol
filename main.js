@@ -1668,7 +1668,7 @@ const bosquesStyle = new ol.style.Style({
   })
 });
 
-const bosquesColor1 = 'rgba(19, 116, 63, 0.8)'
+const bosquesColor1 = 'rgba(44, 150, 118, 0.8)'
 const bosquesStyle1 = new ol.style.Style({
   fill: new ol.style.Fill({ 
     color: bosquesColor1, 
@@ -1723,7 +1723,7 @@ const bosquesStyle5 = new ol.style.Style({
   })
 });
 
-
+const bosquesContornoColor = 'rgba(255, 23, 23, 0.8)'
 const bosquesContorno = new ol.style.Style({
     stroke: new ol.style.Stroke({ 
     color: bosquesColor, 
