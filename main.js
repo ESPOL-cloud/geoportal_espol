@@ -4064,7 +4064,160 @@ const lagunas = new ol.layer.Vector({
 });
 
 
+// HITOS LINDERO
+const hitosStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(243, 161, 37)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
 
+const hitos_predioStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgb(252, 248, 32)'  
+  }),
+  stroke: new ol.style.Stroke({ 
+    color: '#17191a', 
+    width: 2 
+  })
+});
+
+const puntos_control = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/puntos_control.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Puntos de control",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('Layer'); 
+    
+
+    if (attributeValue && attributeValue.toLowerCase().includes('')) {
+
+      // 1. Clone the geometry so we don't alter the source file data coordinates
+      const scaledGeometry = feature.getGeometry().clone();
+      
+      // 2. Scale the geometry up. Change 1.5 to whatever multiplier you want 
+      // (e.g., 2.0 doubles the size, 0.5 cuts it in half)
+      scaledGeometry.scale(1); 
+      
+      // 3. Assign this new scaled geometry explicitly to your base style
+      // (Assuming sondeoStyle is your ol.style.Style variable declared outside)
+      hitosStyle.setGeometry(scaledGeometry);
+
+      const stylesToRender = [hitosStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1.6) {
+        const labelText = feature.get('Layer') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point',
+            textBaseline: 'bottom', // Aligns the bottom of the text to the point anchor
+            offsetY: -10, 
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+    }
+});
+
+
+
+const hitos_predio = new ol.layer.Vector({
+  source: new ol.source.Vector({ 
+    url: './capas/hitos_predio.geojson', 
+    format: new ol.format.GeoJSON() 
+  }),
+  title: "Hitos límites",
+  visible: false,
+  style: function(feature, resolution) {
+    const attributeValue = feature.get('Layer'); 
+    
+
+    if (attributeValue && attributeValue.toLowerCase().includes('')) {
+
+      // 1. Clone the geometry so we don't alter the source file data coordinates
+      const scaledGeometry = feature.getGeometry().clone();
+      
+      // 2. Scale the geometry up. Change 1.5 to whatever multiplier you want 
+      // (e.g., 2.0 doubles the size, 0.5 cuts it in half)
+      scaledGeometry.scale(2); 
+      
+      // 3. Assign this new scaled geometry explicitly to your base style
+      // (Assuming sondeoStyle is your ol.style.Style variable declared outside)
+      hitos_predioStyle.setGeometry(scaledGeometry);
+
+      const stylesToRender = [hitos_predioStyle];
+
+      // 2. Only generate and push the labelStyle if resolution is higher than 0.8
+      if (resolution < 1.6) {
+        const labelText = feature.get('Punto') || ''; 
+
+        const labelStyle = new ol.style.Style({
+          text: new ol.style.Text({
+            text: labelText,
+            font: 'bold 12px Arial, sans-serif',
+            fill: new ol.style.Fill({ color: '#ffffff' }), 
+            stroke: new ol.style.Stroke({ color: '#17191a', width: 3 }), 
+            overflow: true, 
+            placement: 'point',
+            textBaseline: 'bottom', // Aligns the bottom of the text to the point anchor
+            offsetY: -10, 
+          }),
+          geometry: function(feature) {
+            const geom = feature.getGeometry();
+            if (geom.getType() === 'Polygon') {
+              return geom.getInteriorPoint(); 
+            } else if (geom.getType() === 'MultiPolygon') {
+              return geom.getInteriorPoints();
+            }
+            return geom;
+          }
+        });
+
+        stylesToRender.push(labelStyle);
+      }
+
+      // 3. Return the array (will contain 1 or 2 styles depending on the resolution)
+      return stylesToRender;
+
+    } 
+    }
+});
+
+
+
+const lindero_grupo = new ol.layer.Group({
+  title: 'Lindero',
+  layers: [hitos_predio, puntos_control],
+  fold: 'close',
+});
 
 
 
@@ -4099,6 +4252,7 @@ const map = new ol.Map(
             parqueos,
             parqueos_texto,
             vias,
+            lindero_grupo,
             arriendos,
             puntos_arriendos,
             comodatos,
@@ -4678,15 +4832,23 @@ map.on('singleclick', function (evt) {
     }
 
 
-    htmlContent += '<tr><td><strong>AÑO SONDEO</strong></td><td>'+ (props.ano_sondeo || 'N/A') + '</td></tr>'
-
-    if (props.prof !== undefined && props.prof!== null && props.prof !== '') {
-    htmlContent += `<tr><td><strong>PROFUNDIDAD (M)</strong></td><td>${prof}</td></tr>`;
+    htmlContent += 
+    '<tr><td><strong>AÑO SONDEO</strong></td><td>'+ (props.ano_sondeo || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>PROFUNDIDAD (M)</strong></td><td>'+ (prof || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>TIPO ENSAYO</strong></td><td>'+ (props.ensayo || 'N/A') + '</td></tr>'
   }
 
-    if (props.ensayo !== undefined && props.ensayo !== null && props.ensayo !== '') {
-    htmlContent += `<tr><td><strong>TIPO ENSAYO</strong></td><td>${props.ensayo}</td></tr>`;
+  else if (typeof puntos_control !== 'undefined' && clickedLayer === puntos_control) {
+    htmlContent += 
+    '<tr><td><strong>ESTE (m)</strong></td><td>'+ (props.X_COORD || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>NORTE (m)</strong></td><td>'+ (props.Y_COORD || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>Z (m)</strong></td><td>'+ (props.Z_COORD || 'N/A') + '</td></tr>'
   }
+
+  else if (typeof hitos_predio !== 'undefined' && clickedLayer === hitos_predio) {
+    htmlContent += 
+    '<tr><td><strong>ESTE (m)</strong></td><td>'+ (props.X_COORD || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>NORTE (m)</strong></td><td>'+ (props.Y_COORD || 'N/A') + '</td></tr>'
   }
 
 
