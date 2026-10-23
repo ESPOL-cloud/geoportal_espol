@@ -4640,7 +4640,7 @@ map.on('singleclick', function (evt) {
     '<tr><td><strong>Ref.</strong></td><td>'+ (props.referencia_inmueble || 'N/A') + '</td></tr>' +
     '<tr><td><strong>Área (m2)</strong></td><td>'+ (props.área_total_construcción || 'N/A') + '</td></tr>';
   } 
-  
+
 
   // --- CASO 2: TU SEGUNDA CAPA (Reemplaza 'capa_dos' con tu variable real) ---
   else if (typeof comodatos !== 'undefined' && clickedLayer === comodatos) {
@@ -4832,10 +4832,12 @@ map.on('singleclick', function (evt) {
     }
 
 
-    htmlContent += 
-    '<tr><td><strong>AÑO SONDEO</strong></td><td>'+ (props.ano_sondeo || 'N/A') + '</td></tr>' +
+    htmlContent += // SE COLOCA MAX WIDTH
+    '<tr><td><strong>PROYECTO</strong></td>'+ '<td style="width: 600px; white-space: normal; word-break: break-word; padding: 4px 4;">' + (props.proyecto || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>CONSULTOR</strong></td><td>'+ (props.consultor || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>TIPO ENSAYO</strong></td><td>'+ (props.ensayo || 'N/A') + '</td></tr>' +
     '<tr><td><strong>PROFUNDIDAD (M)</strong></td><td>'+ (prof || 'N/A') + '</td></tr>' +
-    '<tr><td><strong>TIPO ENSAYO</strong></td><td>'+ (props.ensayo || 'N/A') + '</td></tr>'
+    '<tr><td><strong>AÑO SONDEO</strong></td><td>'+ (props.ano_sondeo || 'N/A') + '</td></tr>'
   }
 
   else if (typeof puntos_control !== 'undefined' && clickedLayer === puntos_control) {
