@@ -4833,7 +4833,7 @@ map.on('singleclick', function (evt) {
 
 
     htmlContent += // SE COLOCA MAX WIDTH
-    '<tr><td><strong>PROYECTO</strong></td>'+ '<td style="width: 600px; white-space: normal; word-break: break-word; padding: 4px 4;">' + (props.proyecto || 'N/A') + '</td></tr>' +
+    '<tr><td><strong>PROYECTO</strong></td>'+ '<td style="max-width: 600px; white-space: normal; word-break: break-word; padding: 4px 4;">' + (props.proyecto || 'N/A') + '</td></tr>' +
     '<tr><td><strong>CONSULTOR</strong></td><td>'+ (props.consultor || 'N/A') + '</td></tr>' +
     '<tr><td><strong>TIPO ENSAYO</strong></td><td>'+ (props.ensayo || 'N/A') + '</td></tr>' +
     '<tr><td><strong>PROFUNDIDAD (M)</strong></td><td>'+ (prof || 'N/A') + '</td></tr>' +
